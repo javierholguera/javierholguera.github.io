@@ -1,0 +1,35 @@
+---
+layout: post
+title: Forzar ejecución en 32 bits
+date: 2010-11-20 16:51:20.000000000 +00:00
+type: post
+published: true
+status: publish
+categories:
+- Visual Studio 2010
+tags:
+- 32bit
+- corflags
+- ejecucion
+- forzar
+meta:
+  _edit_last: '11'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1450842246;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:37;}i:1;a:1:{s:2:"id";i:104;}i:2;a:1:{s:2:"id";i:291;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Escenario: una aplicación .NET ejecutándose en una máquina de 64 bits, que falla. Exactamente el mismo ejecutable, sobre una máquina de un compañero en 32 bits, funciona perfectamente. ¿Podemos forzar a esa aplicación a ejecutarse con compatibilidad 32 bits, como hacen montones de aplicación hoy en día en los entornos de 64 (me viene a la cabeza Visual Studio 2010, por ejemplo). Claramente, sí.</p>
+<p>Después de un poco de investigación, encontré <a href="http://davidstechtips.com/2010/06/force-net-application-to-run-in-32-bit-process-on-64-bit-windows">este enlace</a> describiendo las distintas posibilidades que tenemos. Voy a explicar cuál es la que aplicaba a mi escenario.</p>
+<h6>Modificar flag en Assembly</h6>
+<p>En mi caso, dado que era un compilado ya desplegado (fuera la opción VS) y que era una aplicación de escritorio (fuera la opción de IIS), me quedé con la posibilidad de modificar un flag del assembly.</p>
+<p>En cada assembly existen unas ciertas cabeceras que son modificables mediante la herramienta “CoreFlags”. En este caso concreto, es el flag 32BIT el que tenemos que modificar. Para hacer el cambio, abriríamos una consola de Visual Studio y ejecutaríamos el siguiente comando, para marcar el flag y asegurarnos de que nuestra aplicación se ejecuta sobre 32 bits</p>
+<blockquote><p>CorFlags Assembly_a_modificar.exe /32BIT+</p>
+</blockquote>
+<p>Para desactivar el flag, el comando es casi idéntico.</p>
+<blockquote><p>CorFlags Assembly_a_modificar.exe /32BIT-</p>
+</blockquote>
+<p>Espero que os resulte tan útil como a mí.</p>

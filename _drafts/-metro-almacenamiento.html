@@ -1,0 +1,51 @@
+---
+layout: post
+title: "[Metro] Almacenamiento"
+date: 
+type: post
+published: false
+status: draft
+categories: []
+tags: []
+meta: {}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>En las Aplicaciones Metro con HTML/Javascript podemos tener varios tipos de almacenamiento:</p>
+<ul>
+<li>HTML5 Web Storage </li>
+<li>File API </li>
+<li>Indexed Database API </li>
+<li>Application Cache API </li>
+</ul>
+<p>Veamos qué uso tiene cada uno de estos mecanismos.</p>
+<h6>HTML5 Web Storage</h6>
+<p>Este sencillo estándar sigue una estructura parecida a las cookies, basada en parejas clave/valor. Sin embargo, tiene algunas ventanas como:</p>
+<ul>
+<li>No se transmite la información en cada petición, a diferencia de lo que ocurren con las cookies. </li>
+<li>Soporta compartir la información a través de múltiples ventanas (sessionStorage) </li>
+<li>Soporta compartir la información más allá de la sesión actual (localStorage) </li>
+</ul>
+<p>La página de su estándar en W3C <a href="http://dev.w3.org/html5/webstorage/">aquí</a>.</p>
+<h6>File API</h6>
+<p>Este estándar está orientado a la lectura y manipulación de ficheros. Se basa en una serie de interfaces que realizan distintas funciones:</p>
+<ul>
+<li>FileList: representa una lista de ficheros. </li>
+<li>Blob: representa información binaria inmutable. </li>
+<li>File: representa los atributos de sólo lectura de un fichero. </li>
+<li>FileReader: provee métodos para leer un File o un Blob. </li>
+</ul>
+<p>Este estándar es más reciente e inmaduro que, por ejemplo, WebStorage, y su soporte es parcial en casi todos los navegadores. La página de su estándar en W3C <a href="http://www.w3.org/TR/FileAPI/">aquí</a>.</p>
+<h6>Indexed Database API</h6>
+<p>Este estándar representa una base de datos capaz de almacenar tanto valores simples como jerarquías de objetos. La principal característica de este estándar es que está totalmente desvinculado de SQL, precisamente uno de sus requisitos desde sus primeras etapas.</p>
+<p>Tiene APIs tanto síncrona como asíncrona (para utilizar con Web Workers) y su uso es preferible frente a alternativas como WebStorage cuando se va a almacenar una gran cantidad de información o existe una cierta complejidad en sus relaciones, puesto que es mucho más potente.</p>
+<p>La página de su éstandar en W3C <a href="http://www.w3.org/TR/IndexedDB/">aquí</a>.</p>
+<h6>Application Cache API</h6>
+<p>Esta API es parte del estándar HTML5 y está enfocada a facilitar el uso offline de las aplicaciones web, además de mejorar su rendimiento permitiendo registar objetos que se quieran cachear y que estén disponibles en un entorno desconectado.</p>
+<p>La sección correspondiente en el estándar HTMl5 en W3C <a href="http://www.w3.org/TR/html5/offline.html#application-cache-api">aquí</a>.</p>
+<p>Cuando usar cada uno</p>
+<p>Creo que Israel Hilerio lo explica mejor que yo en este vídeo.</p>

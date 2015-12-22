@@ -1,0 +1,64 @@
+---
+layout: post
+title: IE9 y el Dead Code Elimination
+date: 2010-11-21 14:48:26.000000000 +00:00
+type: post
+published: true
+status: publish
+categories:
+- Otros
+tags:
+- cheat
+- Dead Code Elimination
+- FUD
+- IE9
+- trampas
+meta:
+  _edit_last: '11'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1449865897;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:137;}i:1;a:1:{s:2:"id";i:167;}i:2;a:1:{s:2:"id";i:233;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Llevamos muchos años oyendo que Mozilla Firefox es el navegador más rápido. Unos cuantos menos oyendo que Google Chrome es aún más rápido. Y aún más oyendo decir que Internet Explorer era el más lento de todos. Se ha convertido en una especie de mantra, de verdad fundamental e incuestionable. Casi tan incuestionable como que los ingenieros de Microsoft son todos borderline.</p>
+<p>Pero resulta que en el último año los borderline se han puesto las pilas con Internet Explorer 9 y llevan un año mostrándonos como, Platform Preview tras Platform Preview, IE9 iba poco a poco reduciendo la diferencia que le separaba de Firefox y Chrome en muchos aspectos, especialmente en el capítulo de soporte a estándares y rendimiento.</p>
+<p>En cuanto al primero, asistimos a un ejercicio curioso de manipulación. Cualquiera que esté mínimamente informado sabrá que HTML5 no es un estándar, sino un borrador de trabajo (Working Draft) sobre un futuro estándar. Borrador de trabajo que, por cierto, algunos estiman que <a href="○ http://blogs.techrepublic.com.com/programming-and-development/?p=718">no será aprobado como estándar de forma oficial hasta… ¡2022!</a> (no lo digo yo, ni Microsoft, lo dice el editor del estándar, empleado de Google para más señas).</p>
+<p>Pues esta verdad con respecto a HTML5 y al hecho de que no es más que un borrador, no impide a algunos atacar a otros bajo la ofensa de no haber implementado características del borrador que no son, ni mucho menos, estables. Sentencia: se sigue sin ser respetuoso con los estándares (a pesar de no existir como tales).</p>
+<h6>La Noticia</h6>
+<p>Pero si el proceso resulta bastante evidente con respecto al soporte a estándares, no menos lo es en lo que respeta al rendimiento. Está claro que no resulta sencillo aceptar que las cosas están cambiando. A todos nos pasa, damos algo tan por sentado que cuando deja de ser así, preferimos mirar para otro lado o rebelarnos ante ello. Esto último está pasando con la reciente noticia de que <a href="http://www.downloadsquad.com/2010/11/17/internet-explorer-9-preview-7-available-takes-sunspider-crown-13-million-downloads/">IE9 Platform Preview es el navegador más rápido en el test de SunSpider</a>. No voy a hablar de aceleración por hardware, porque si nos metemos en ese terreno la ventaja es tan abrumadora que nadie podría poner en duda que IE9 es, hoy en día, líder indiscutible en prácticamente todos los aspectos.</p>
+<h6>EL FUD (Fear, Uncertainty and Doubt)</h6>
+<p>El FUD, ese viejo conocido. Si preguntas a cualquier persona que pertenezca al software libre o que tenga antipatía de algún modo por Microsoft (puedes entrar en Barrapunto o Meneame y elegir al azar), te dirá que lo inventó Microsoft.</p>
+<p>Puede que sea verdad, pero lo que es indudablemente cierto es que ha hecho aparición para amortiguar el efecto mediático que habría supuesto que IE9 fuera más rápido que ningún otro navegador, en un microbenchmark creado por la competencia (Sunspider es obra de la gente de WebKit, motor de Safari y Chrome entre otros).</p>
+<p>El resultado ha sido muy satisfactorio. Acceder a Google, poner los términos Internet Explorer y Sunspider, no nos devuelve ningún resultado la primera página relacionado con el éxito de IE9, sólo nos habla del posible (para algunos indudable) asunto de las “trampas” en el microbenchmark. Es decir, hemos pasado de una publicidad positiva basada en hechos objetivos, a una publicidad negativa basada en un supuesto no demostrado y en la viralidad que cualquier crítica, justificada o no, adquiere cuando el objeto del chismorreo es Microsoft. Si esto no es FUD de manual, ya me diréis.</p>
+<h6>El Chismorreo</h6>
+<p>El chismorreo empezó como empiezan estas cosas, con una opinión legítima: un desarrollador de Mozilla se preguntaba porqué Chackra, el motor de Javascript que lleva IE9, no ejecutaba una función parte de uno de los tests (math-cordic) que se ejecutan en Sunspider. En principio se planteaba si era posible que se debiera a la detección de ese método como candidato a una <a href="http://en.wikipedia.org/wiki/Dead_code_elimination">Dead Code Elimination</a>.</p>
+<p>Una optimización de este tipo busca código que no tiene ningún efecto de un programa y lo elimina. Cuando trabajamos con entornos sin análisis estático del código, es relativamente sencillo no darse cuenta de que, probablemente por un error de programación, estamos ejecutando código que no produce ningún resultado. Un ejemplo burdo:</p>
+<pre class="code"><span style="color: blue">public int </span>Multiplicar(<span style="color: blue">int </span>operando1, <span style="color: blue">int </span>operando2)
+{
+    <span style="color: blue">int </span>resultado = 0;
+    <span style="color: blue">for</span>(<span style="color: blue">int </span>i=0; i&lt;operando2; i++)
+    {
+        resultado += operando1;
+    }
+
+    <span style="color: blue">return </span>operando1 * operando2;
+}</pre>
+<p>En este ejemplo, el bucle es un candidado a ser eliminado, puesto que no realiza ningún función práctica. Exactamente lo mismo ocurría con el método cordicsincos() objeto de esta polémica.</p>
+<p>A partir de aquí, el revuelo cuando alguien decidió sugerir que esto no era una simple característica nueva en Chackra sino una optimización específicamente pensada para mejorar los resultados en Sunspider y colocarse primero. “Cheat” y “Microsoft” juntos en la misma frase, resultado esperado: el rumor se extendió por la pólvora. La base para tal afirmación estaba en el hecho de que, <a href="http://news.ycombinator.com/item?id=1913315">modificando el código y manteniendo un fragmento candidado a ser eliminado, el sistema de análisis del DCE no lo descubría y no lo borraba</a>. </p>
+<p>De poco ha valido la explicación que ha aportado la gente del equipo de IE9 en su blog: DCE <a href="http://blogs.msdn.com/b/ie/archive/2010/11/17/html5-and-real-world-site-performance-seventh-ie9-platform-preview-available-for-developers.aspx">es una nueva característica, está en desarrollo y no cubre todos los escenarios</a>, además de ser necesario mantener un balance entre la cantidad de análisis que se hace sobre el código JS antes de compilarlo, y el rendimiento. Obviamente este tipo de análisis no son triviales y requieren de un tiempo que puede, en definitiva, no merecer la pena cuando va a resultar más rápido ejecutar directamente el código innecesario.</p>
+<p>Con lo que el escenario en que ahora mismo nos encontramos es que la noticia con respecto a IE9 no es que sea tanto o más rápido que sus competidores en este microbenchmark, sino que un ingenierio de la competencia descubrió que el nuevo sistema de DCE de un código que no es ni siquiera una beta, no es capaz de detectar todos los posibles escenarios, pero sí lo hace con uno concreto que forma parte de un microbenchmark (al que tanto Microsoft como <a href="http://weblogs.mozillazine.org/asa/archives/2010/10/some_sunspider_numbe.html">gente de Mozilla han restado importancia</a> puesto que no se asemeja al funcionamiento de los sitios web del mundo real).</p>
+<h6>Mi conclusión</h6>
+<p>Creo que no hace falta que la aporte, porque ya se desprende de mi tono en el artículo. Mi experiencia profesional es limitada y también mi conocimiento de los navegadores. No viví la famosa guerra de los 90, ni la forma en que se regía y comportaba Microsoft en aquellos años. No dudo que fuera el “evil” en el que, supuestamente, Google no quiere convertirse.</p>
+<p>Pero desde que yo estoy en esta profesión, apróximadamente 2006, no he visto ningún movimiento por parte de Microsoft que haya sido mejor o peor que los que ha llevado a cabo Google, Apple o cualquiera de las grandes compañías en el sector. Sin embargo, mientras a Apple se le ríen las gracias (ayer mismo compré un cable para mi Touch que, por no ser de Apple, no lleva un chip y resulta totalmente inútil, 13 euros a la basura), a Google se le permite que gestione nuestros datos personales con mucha alegría y poca gente habla de lo que está haciendo Oracle con MySQL y Java, a Microsoft se la mira con una lupa lo suficientemente potente como para distorsionar la realidad y ver oscuras conspiraciones donde no hay más que un fragmento de código que no es lo suficientemente completo y maduro como para cubrir todos los escenarios posibles.</p>
+<p>Flaco favor nos hacemos los unos a los otros si el escenario de “batalla” se desplaza de la mera destreza técnica a las más burdas tácticas propagandísticas.</p>
+<h6>Bibliografía:</h6>
+<ul>
+<li><a href="http://blogs.msdn.com/b/ie/archive/2010/11/17/html5-and-real-world-site-performance-seventh-ie9-platform-preview-available-for-developers.aspx">Explicación oficial del equipo de IE</a></li>
+<li><a href="http://digitizor.com/2010/11/17/internet-explorer-9-caught-cheating-in-sunspider-benchmark/">FUD del bueno</a>: aprovechando el asunto, se llegan a poner en duda los resultados en los tests de HTML5 (que fueron llevados a cabo por la propia W3C)</li>
+<li><a href="http://news.ycombinator.com/item?id=1913315">Hilo de pruebas en Hacker News</a>: ejemplos que sí detecta y ejemplos que no detecta</li>
+<li><a href="http://arstechnica.com/microsoft/news/2010/11/lies-damned-lies-and-benchmarks-is-ie9-cheating-at-sunspider.ars">Arstecnica poniendo un poco de cordura sobre el asunto</a></li>
+<li><a href="http://blog.mozilla.com/rob-sayre/2010/11/17/dead-code-elimination-for-beginners/">El ingeniero de Mozilla sigue apuntando a la trampa</a></li>
+</ul>

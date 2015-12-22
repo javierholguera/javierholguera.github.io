@@ -1,0 +1,35 @@
+---
+layout: post
+title: Cómo suprimir errores en proyectos de DB
+date: 2012-02-13 22:05:43.000000000 +00:00
+type: post
+published: true
+status: publish
+categories:
+- Databases
+tags:
+- database
+- warnings
+meta:
+  _edit_last: '11'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1450345263;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:18;}i:1;a:1:{s:2:"id";i:23;}i:2;a:1:{s:2:"id";i:291;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Últimamente estoy teniendo que pelearme mucho con proyectos de bases de datos de Visual Studio y no puedo decir que lo esté disfrutando.</p>
+<p>Sin embargo he de reconocer que una de las cosas más interesantes que tienen es la posibilidad de compilar y analizar estáticamente el código TSQL de estos proyectos, como si se trata de código C# o VB.NET.</p>
+<p>Siendo como es una ventaja para escribir código primero correcto y, posteriormente, más óptimo y, en general, de mejor calidad, en ocasiones cabe la posibilidad de que queramos hacer caso omiso a los warnings y errores que nos lanza.</p>
+<p>A diferencia de sus equivalentes en código procedural, con los proyectos de base de datos no tenemos ni directivas pragma ni atributos SuppressMessage que nos permitan ignorar estas advertencias. Sin embargo no estamos perdidos del todo, tenemos dos posibles estrategias a seguir:</p>
+<h6>Fuerza bruta</h6>
+<p>Si eres de los que no le importa usar la fuerza bruta para resolver sus problemas lo más rápido posible, ésta es tu opción: simplemente eliminar todos los errores del tipo para todo el proyecto.</p>
+<p>En la siguiente imagen se pueden ver las propiedades del proyecto de base de datos, en concreto la pestaña de Build. En ella podemos introducir los números correspondiente a las reglas que queremos ignorar para el proyecto completo.</p>
+<p><a href="http://javi.azurewebsites.net/wp-content/uploads/2012/02/image1.png"><img style="border-bottom: 0px;border-left: 0px;padding-left: 0px;padding-right: 0px;border-top: 0px;border-right: 0px;padding-top: 0px" border="0" alt="image" src="{{ site.baseurl }}/assets/image_thumb1.png" width="504" height="433" /></a></p>
+<h6>El modo preciso</h6>
+<p>La desventaja clara de la opción anterior es que perderemos ese tipo de avisos para posteriores errores que pudiéramos introducir en el proyecto. Sería mucho más práctico si pudiéramos reducir el alcance de la supresión a, por ejemplo, un único fichero, sabiendo que en los proyectos de bases de datos cada fichero contiene un único objeto de la base de datos.</p>
+<p>Pues bien, por suerte es posible y además es muy sencillo. Basta con pinchar en el fichero deseado y mostrar las propiedades del mismo. Veremos una caja de texto denominada “Suppress Warnings” en la que podremos introducir el código que representa la regla a suprimir. En la siguiente figura se puede ver.</p>
+<p><a href="http://javi.azurewebsites.net/wp-content/uploads/2012/02/image.png"><img style="border-right-width: 0px;padding-left: 0px;padding-right: 0px;border-top-width: 0px;border-bottom-width: 0px;border-left-width: 0px;padding-top: 0px" border="0" alt="image" src="{{ site.baseurl }}/assets/image_thumb.png" width="504" height="404" /></a></p>
+<p>Gracias a esta opción podremos seguir recibiendo los avisos de este error en otros ficheros en los que nos equivoquemos.</p>

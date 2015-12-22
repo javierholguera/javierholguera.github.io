@@ -1,0 +1,71 @@
+---
+layout: post
+title: 'FAQ: Story points'
+date: 2015-12-03 20:41:44.000000000 +00:00
+type: post
+published: true
+status: publish
+categories:
+- Agile
+tags:
+- agile
+- scrum
+- story points
+meta:
+  _wpcom_is_markdown: '1'
+  _edit_last: '1'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1449522389;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:271;}i:1;a:1:{s:2:"id";i:105;}i:2;a:1:{s:2:"id";i:12;}}}}
+  _wpas_done_all: '1'
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p><a href="http://www.javierholguera.com/wp-content/uploads/2015/12/planning_poker.png"><img class="wp-image-2031 alignnone" src="{{ site.baseurl }}/assets/planning_poker-300x150.png" alt="planning_poker" width="762" height="381" /></a></p>
+<p>Story points are quite old, but there are still way too many misunderstandings around them. Below I'm going to try to shed some light on the most common doubts around them.</p>
+<p><strong>What are Story Points?</strong><br />
+It's a way to measure the effort necessary to implement a story, where a story is some requirement that an Agile team is going to convert into working software.</p>
+<p><strong>How do they work?</strong><br />
+You have a scale of values, you define a baseline (a really simple story that you would consider requires an effort of 1 point) and then you estimate everything relatively to that baseline story. If a story requires the same or less effort than your baseline, you give it 1 point. If it is roughly twice as difficult, you assign 2 points. The values in the scale have to be spacious enough to make sure you don't try to estimate "too precisely". Therefore many teams choose Fibonacci series as their scale (1, 2, 3, 5, 8, etc).</p>
+<p><strong>Wait a minute, what do you mean by "don't try to estimate too precisely"? And why not just estimating using time?</strong><br />
+I mean exactly that. When you use this technique, you are implicitly recognizing that you can't provide meaningful estimations with the level of detail that a time estimation requires. In plain English, you recognize your estimations in time are not accurate, therefore they don't have any value.</p>
+<p>Instead you use a more high-level, less-precise measure like story points. Even if it is less precise than a time-based estimation, it is more valuable because it's more stable and, overtime, it will be more helpful to forecast team and project progress.</p>
+<p><strong>Is effort all I have to take into account when estimating with story points?</strong><br />
+Not necessarily, although it is the most important bit. Other things that you may consider are:</p>
+<ul>
+<li>How clear are the requirements and acceptance criteria in the story?</li>
+<li>Does it look like they may be many technical or business unknowns that will be discovered during the implementation phase?</li>
+<li>Is there any technical risk? For example, are you using a technology for the first time?</li>
+</ul>
+<p>The more question marks around the story, the higher the number of story points.</p>
+<p><strong>Can I sum story points?</strong></p>
+<p>No, you can't. They don't represent numbers, they represent buckets. That means that, when you have a story that is the same or less effort  than your base line, you put in the 1-point bucket. When it's the same or less than twice the effort for your base line, you throw it to the 2-point bucket, etc. You get the point.</p>
+<p>Also quite often the amount of time require to implement a 3-point story will be much more than 50% more the effort of a 2-point story. There is no linearity, not to mention that the higher the bucket, the <a href="http://www.mountaingoatsoftware.com/blog/seeing-how-well-a-teams-story-points-align-from-one-to-eight">wilder the oscillation in implementation time</a> (which makes sense because the higher the risk too).</p>
+<p><strong>Is Story Points the only way to measure stories and forecast?</strong></p>
+<p>No, there are other metrics. T-shirt sizes is quite common too. Some people also consider using "ideal days". This one is, more or less, a representation of how much work you can do in a perfect day, without meetings, without distractions and without any other problem. Then you assign those ideal days to stories and, if you're working on sprints, over time you can measure how many actual ideal days your team has per sprint.</p>
+<p><strong>Do I have to use Story Points if I do Scrum?</strong></p>
+<p>Not at all. If you check the Scrum.org Scrum Guide, <a href="http://www.scrumguides.org/scrum-guide.html">story points aren't mention anywhere</a>. That makes all the sense, because contrary to what many people think, Scrum is a quite loose framework (not a process) that you have to fill in with your own practices to come up with a development process. Actually, years ago the Guide didn't even mention estimations. It just mentioned your backlog should be ordered and it was up to the Product Owner to discover what that order should be.</p>
+<p><strong>Why should I use Story Points then?</strong></p>
+<p>You shouldn't if you don't know why you would use them. And you would use them if you want to provide some forecasting regarding your project. Basically, been able to answer the question: "when is this going to be done?". Story Points help you answer that question because, overtime, you get some sense of how many points you can deliver per unit of time, where that unit of time is usually your sprint size in weeks. Based on that, you can be reasonable confident about how many stories you can get done and when, on a relatively close time horizon. Don't try to estimate a massive project using story points before even starting it, it won't work. You won't have enough understanding of the project, the stakeholders and the technology and your estimations will have zero value.</p>
+<p><strong>Why should I estimate in the first place?</strong></p>
+<p>Well, if you are a developer, estimating doesn't add any value to you; zero. You just want to get a list of things to do and nail them and you don't need to communicate in advance when they'll be done, right? However, some people would argue that part of been a professional engineer includes providing meaningful estimations regarding delivery of software to the rest of the business. In <a href="http://www.kitchensoap.com/2012/10/25/on-being-a-senior-engineer/">better words than mine</a>:</p>
+<blockquote><p>Avoiding responsibility for estimates is another way of saying, “I’m not ready to be relied upon for building critical pieces of infrastructure.” All businesses rely on estimates, and all engineers working on a project are involved in <a title="Resilience Engineering Part II: Lenses" href="http://www.kitchensoap.com/2012/03/30/the-devils-in-the-details/" target="_blank">Joint Activity</a>, which means that they have a responsibility to others to make themselves <em>interpredictable</em>. In general, mature engineers are comfortable with working within some nonzero amount of uncertainty and risk.</p></blockquote>
+<p>So man up and come up with some respetable estimations that you're willing to commit to.</p>
+<p><strong>Should Management measure team's productivity using Story Points? </strong></p>
+<p>NEVER. That is one of the biggest mistakes that can be done. If you do so, you're going to make two mistakes in one:</p>
+<ul>
+<li>You will ruin story points as a tool to estimate. Eventually every human being tends to trick any system rules, even unconsciously. If you measure people's productivity with points, they will just inflate their estimations to make it look like more points are delivered per sprint, therefore the team is doing more. Wrong and useless.</li>
+<li>You'll miss the opportunity to use a proper and useful measure, like business value. Not saying that business value is easy to measure, though, but definitively worth trying instead of measuring something that is completely irrelevant and easy to trick.</li>
+</ul>
+<p><strong>What's the difference with Planning Poker?</strong></p>
+<p>Planning Poker is just a estimation technique, not a estimation measure. You use planning poker as a way to take advance of the "Wisdom of Crowds". Planning Poker is useful because:</p>
+<ul>
+<li>Estimations are done and presented without knowing other members' opinion. Therefore more junior/shy members won't be influenced by estimations presented by senior/stronger players.</li>
+<li> If estimations don't match, a healthy debate is triggered where more information is brought into the discussion for those that have bigger/smaller numbers. That benefits the final estimation and also helps all team benefit from the insights of each member.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Is that all?</strong></p>
+<p>Not really, there are many other things that are interesting on this topic, like trying to correlate points with time (bad idea IMHO) , what a good scale for points should look like, what to do if you realize after implementing a story that it was over/under estimated, how to manage scope creep, etc. Maybe for another day.</p>
+<p>&nbsp;</p>
