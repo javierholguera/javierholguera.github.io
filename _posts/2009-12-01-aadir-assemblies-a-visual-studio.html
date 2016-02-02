@@ -24,7 +24,7 @@ author:
   last_name: ''
 ---
 <p>Muchas veces necesitamos que un assembly esté en el GAC para no estar preocupados de incluirlo en cada proyecto. Simplemente, lo seleccionamos de la ventana “Add Reference” de Visual Studio, y somos felices con ello. Sin embargo, esta semana pasada me surgió la necesidad de añadir un assembly al GAC por mí mismo.</p>
-<p><a href="{{ site.baseurl }}/assets/uploads/2009/12/AddReferenceWindow.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="AddReferenceWindow" border="0" alt="AddReferenceWindow" src="{{ site.baseurl }}/assets/AddReferenceWindow_thumb.png" width="722" height="640" /></a> </p>
+<p><a href="{{ site.url }}/assets/uploads/2009/12/AddReferenceWindow.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="AddReferenceWindow" border="0" alt="AddReferenceWindow" src="{{ site.url }}/assets/AddReferenceWindow_thumb.png" width="722" height="640" /></a> </p>
 <p>No es que sea demasiado difícil, basta con copiarlo a c:windowsassembly. Hasta un tecnicoless podría hacerlo. Sin embargo, no apareció mágicamente en la ventana de Add Reference. ¿Qué había hecho mal? ¿Qué me faltaba? Buceando un poco por Internet encontré a un tipo <a href="http://weblogs.asp.net/jdanforth/archive/2003/12/16/43841.aspx">explicando cómo hacerlo</a> de 3 formas distintas.</p>
 <p>Huelga decir que elegí la más sencilla: copiar mi assembly a C:Program FilesMicrosoft Visual Studio 9.0Common7IDEPublicAssemblies</p>
 <p>Rearrancar el Visual Studio fue suficiente para ver mi assembly en la pestaña .NET. ¿Fácil no?</p>

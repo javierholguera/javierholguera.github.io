@@ -1,35 +1,29 @@
+# Dependencies
+markdown:         redcarpet
+highlighter:      pygments
+
 # Permalinks
-#
-# Use of `relative_permalinks` ensures post links from the index work properly.
-permalink:           :year/:month/:day/:title/
+permalink:        :year/:month/:day/:title
 #relative_permalinks: true
 
 # Setup
-title:               El Javi
-tagline:             Yet another dev blog
-url:                 http://javierholguera.com
-paginate:            5
-baseurl:             ""
+title:            El Javi
+tagline:          'Yet another dev blog'
+url:              http://javierholguera.github.io
+baseurl:          /
 
-# Assets
-#
-# We specify the directory for Jekyll so we can use @imports.
-sass:
-  sass_dir:          _sass
-  style:            :compressed
-
-# About/contact
 author:
-  name:              Javier Holguera
-  url:               https://twitter.com/javierholguera
-  email:             javier.holguera@gmail.com
+  name:           'Javier Holguera'
+  url:            https://twitter.com/javierholguera
+
+paginate:         5
 
 # Custom vars
-version:             2.0.0
-github:
-  repo:              https://github.com/poole/poole
+version:          2.1.0
 
-# Gems
+github:
+  repo:           https://github.com/poole/hyde
+
 gems:
   - jekyll-paginate
   - jekyll-gist
