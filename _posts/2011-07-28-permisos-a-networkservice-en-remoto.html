@@ -1,0 +1,30 @@
+---
+layout: post
+title: Permisos a NetworkService en remoto
+date: 2011-07-28 16:32:08.000000000 +01:00
+type: post
+published: true
+status: publish
+categories:
+- SQL Server
+tags:
+- network service
+- permisos
+- sql server
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1449815315;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:104;}i:1;a:1:{s:2:"id";i:122;}i:2;a:1:{s:2:"id";i:7;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Hoy me he encontrado con una situación que, no siendo habitual, tampoco es tan extraña. Tenía una máquina con un servidor de aplicaciones IIS que hospedaba una aplicación web (unos servicios WCF, por concretar). El Application Pool sobre el que corría dicha aplicación web estaba utilizando la cuenta de Network Service de la máquina, y era preciso que accediera a una base de datos <u>en otra máquina.</u></p>
+<p>Parece fácil, ¿no? Pero, ¿cómo darle permisos a una cuenta que no está en nuestra máquina y que tampoco es una cuenta del dominio en el que se encuentran ambas máquinas? La primera pista la podemos encontrar en IIS.NET, en <a href="http://learn.iis.net/page.aspx/624/application-pool-identities/">este post</a> (en inglés). En él nos explican, entre otras muchas cosas, que cada cuenta Network Service de una máquina se convierte en una cuenta distinta cuando trata de acceder a recursos en máquinas distintas. Esta cuenta en la que se “transmuta” Network Service cumple el siguiente patrón:</p>
+<p><b>&lt;nombre_de_dominio&gt;&lt;nombre_de_maquina&gt;$</b></p>
+<p>Con lo cual, si nuestra máquina XXX se encuentra en el dominio YYY, su cuenta “transmutada” sería: <strong>YYYXXX$</strong>. Fácil, ¿verdad? Ahora sólo haría falta dar permisos a dicha cuenta utilizando Management Studio, en el servidor de bases de datos al que queremos atacar. Sin embargo, aquí nos encontramos con otro pequeño problema: Management Studio no es capaz de reconocer dicha cuenta.</p>
+<p>Por eso, en su lugar, tendremos que tirar de consola (o de una ventana de query del Management Studio) y ejecutar el siguiente procedimiento almacenado:</p>
+<pre class="code"><span style="color: blue">exec </span><span style="color: maroon">sp_grantlogin </span><span style="color: red">'nombre_de_dominionombre_de_maquina$'</span></pre>
+<p>&#160;</p>
+<p>Y, ahora sí, refrescando la carpeta de Logins del servidor SQL Server, podremos a este nuevo login y configurarlo para que tenga los permisos necesarios para acceder a la base de datos que toca.</p>

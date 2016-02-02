@@ -1,0 +1,43 @@
+---
+layout: post
+title: Filtrar generación en Moles
+date: 2010-07-27 20:10:33.000000000 +01:00
+type: post
+published: true
+status: publish
+categories:
+- Testing
+tags:
+- C#
+- filter
+- moles
+- Testing
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1449703367;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:291;}i:1;a:1:{s:2:"id";i:40;}i:2;a:1:{s:2:"id";i:212;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Últimamente me he tenido que pelear un poco con Moles. Para los que no sepan qué es Moles, pueden consultar este <a href="http://javierholguera.com/technoblog/?p=51">post mío</a> de hace un tiempo (ya me parezco a Enrique Dans autocitándome). Para los perezosos, resumir en que es un framework para testing que permite inyectar código en cualquier llamada al framework .NET. El ejemplo que suele verse en la mayoría de vídeos y textos demuestra cómo se puede “configurar” lo que queremos que devuelva DataTime.UtcNow, algo que sin Moles resulta imposible, pues UtcNow no tiene método set.</p>
+<p>Bien, si en una librería que estás intentando “molear” tienes un tipo rebelde que se te rompe la generación, o bien prefieres limitar el número de clases que se molean a sólo aquellas que van a utilizar, esto te puede ser de utilidad. En cada mole tendremos un fichero XXX.moles, donde XXX es el ensamblado que hemos moleado. En dicho fichero podemos configurar algunas de las características del mole, lo que hará que se vuelva a generar teniendo en cuenta nuestra configuración.</p>
+<p>Si quisiéramos evitar que se generara código para la clase DateTime en el ensamblado System, deberíamos añadir algo parecido a esto en nuestro fichero .moles:</p>
+<pre class="code"><span style="color: blue">&lt;</span><span style="color: #a31515">Moles </span><span style="color: red">xmlns</span><span style="color: blue">=</span>&quot;<span style="color: blue">http://schemas.microsoft.com/moles/2010/</span>&quot;<span style="color: blue">&gt;
+  &lt;</span><span style="color: #a31515">Assembly </span><span style="color: red">Name</span><span style="color: blue">=</span>&quot;<span style="color: blue">System</span>&quot; <span style="color: blue">/&gt;
+  &lt;</span><span style="color: #a31515">CodeStyle </span><span style="color: red">DisableUniqueAlias</span><span style="color: blue">=</span>&quot;<span style="color: blue">true</span>&quot; <span style="color: blue">/&gt;
+  &lt;</span><span style="color: #a31515">StubGeneration</span><span style="color: blue">&gt;
+    &lt;</span><span style="color: #a31515">Types</span><span style="color: blue">&gt;
+      &lt;</span><span style="color: #a31515">Remove </span><span style="color: red">Namespace</span><span style="color: blue">=</span>&quot;<span style="color: blue">System</span>&quot; <span style="color: red">TypeName</span><span style="color: blue">=</span>&quot;<span style="color: blue">DateTime</span>&quot; <span style="color: blue">/&gt;
+    &lt;/</span><span style="color: #a31515">Types</span><span style="color: blue">&gt;
+  &lt;/</span><span style="color: #a31515">StubGeneration</span><span style="color: blue">&gt;
+  &lt;</span><span style="color: #a31515">MoleGeneration</span><span style="color: blue">&gt;
+    &lt;</span><span style="color: #a31515">Types</span><span style="color: blue">&gt;
+      &lt;</span><span style="color: #a31515">Remove </span><span style="color: red">Namespace</span><span style="color: blue">=</span>&quot;<span style="color: blue">System</span>&quot; <span style="color: red">TypeName</span><span style="color: blue">=</span>&quot;<span style="color: blue">DateTime</span>&quot; <span style="color: blue">/&gt;
+    &lt;/</span><span style="color: #a31515">Types</span><span style="color: blue">&gt;
+  &lt;/</span><span style="color: #a31515">MoleGeneration</span><span style="color: blue">&gt;
+&lt;/</span><span style="color: #a31515">Moles</span><span style="color: blue">&gt;</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a>El fragmento es bastante autoexplicativo: le estamos indicando que, tanto de la generación de Stubs como de Moles, nos elimine la clase DateTime dentro del espacio de nombres System. Podremos introducir tantas entradas dentro de las etiquetas Types, como tipos queramos evitar “molear”.</p>
+<p>&#160;</p>
+<p>Visto en los <a href="http://social.msdn.microsoft.com/Forums/en/pex/thread/2b8b44e0-6979-4d25-8f49-4c65ece72b46">Foros de social.msdn.microsoft.com</a></p>

@@ -1,0 +1,29 @@
+---
+layout: post
+title: CollectionAssert.AreEqual vs CollectionAssert.AreEquivalent
+date: 2011-07-07 15:22:56.000000000 +01:00
+type: post
+published: true
+status: publish
+categories: []
+tags:
+- C#
+- CollectionAssert
+- Testing
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1450425913;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:53;}i:1;a:1:{s:2:"id";i:291;}i:2;a:1:{s:2:"id";i:23;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Como parte de mi trabajo diario tengo que hacer bastantes tests unitarios. Por esta razón me he ido familiarizando con las distintas clases que el framework de testeo de Visual Studio nos ofrece al respecto.</p>
+<p>Una de las últimas que descubrí pero, por otra parte, de las más útiles, es CollectionAssert. Esta clase permite realizar aserciones sobre colecciones y listas, como su propio nombre indica.</p>
+<p>Dos son los métodos que más frecuentemente utilizo, pero cuya semántica es lo bastante parecida como para merecer una explicación un poco más detallada:</p>
+<ul>
+<li><a href="http://msdn.microsoft.com/en-us/library/ms244187.aspx">AreEqual</a>: este método compara dos colecciones y se asegura de ambas tienen los mismos elementos, en el mismo orden y la misma cantidad.</li>
+<li><a href="http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.testtools.unittesting.collectionassert.areequivalent(v=VS.100).aspx">AreEquivalente</a>: este método, sin embargo, simplemente comprueba que ambas colecciones tengan los mismos elementos y en la misma cantidad, sin importar el orden en que se encuentren.</li>
+</ul>
+<p>Por lo tanto, AreEqual no es más que una versión más restricctiva de AreEquivalent, útil si queremos hacer una aserción más precisa en nuestras pruebas.</p>

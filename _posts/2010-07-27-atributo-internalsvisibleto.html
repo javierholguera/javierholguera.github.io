@@ -1,0 +1,36 @@
+---
+layout: post
+title: Atributo InternalsVisibleTo
+date: 2010-07-27 19:54:15.000000000 +01:00
+type: post
+published: true
+status: publish
+categories:
+- Silverlight
+tags:
+- C#
+- internalsVisibleTo
+- Silverlight
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1449288172;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:23;}i:1;a:1:{s:2:"id";i:291;}i:2;a:1:{s:2:"id";i:111;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>El atributo InternalsVisibleTo puede resultarnos muy útil en situaciones en las que tengamos la necesidad de acceder, desde un ensamblado, a los miembros Internal de las clases de otro ensamblado.</p>
+<p>Un ejemplo que me he encontrado últimamente de su uso es en el testeo de aplicaciones Silverlight. Por desgracia, Silverlight no tiene ningún framework de testeo que sea capaz de generar accessors, probablemente porque Reflection no funciona para campos privados en Silverlight.</p>
+<p>Para sustituir esta carencia, en algunos casos podremos marcar la visibilidad de miembros que queramos testear como Internal en lugar de Private y, haciendo uso de InternalsVisibleTo, acceder a ellos desde los correspondientes tests. ¿Cómo lo lograríamos? Son unos pocos pasos:</p>
+<h6>Primer paso: obtener la clave pública </h6>
+<p>Necesitamos conocer la clave pública de firmado del ensamblado al que queremos conceder el privilegio de poder acceder a los miembros internal. Para ello, en una consola de Visual Studio, deberemos introducir el siguiente comando:</p>
+<blockquote><p>sn -Tp c:UsersjavierprojectsMyProjectDllToGrantAccessToInternals.dll</p>
+</blockquote>
+<p>De la salida que nos genera este comando, nos la copiamos para hacer el siguiente paso.</p>
+<h6>Segundo paso: definir el atributo</h6>
+<p>Ahora que ya conocemos la PublicKey del ensamblado (no confudir con la PublicKeyToken que aparece en los qualified names), necesitamos definir el atributo en el fichero AssemblyInfo del proyecto. En dicho fichero deberemos añadir algo como lo siguiente:</p>
+<blockquote><p>[assembly: InternalsVisibleTo(&quot;DllToGrantAccessToInternals.dll, PublicKey=0024000004…)]</p>
+</blockquote>
+<p>&#160;</p>
+<p>¿Sencillo no? Con esto ya podríamos ver los miembros Internal del ensamblado en que hemos definido el atributo, desde el ensamblado DllToGrantAccessToInternals.</p>

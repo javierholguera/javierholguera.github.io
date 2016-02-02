@@ -1,0 +1,106 @@
+---
+layout: post
+title: Testeo unitario con Moles
+date: 2010-02-02 23:46:34.000000000 +00:00
+type: post
+published: true
+status: publish
+categories:
+- Visual Studio 2008
+tags:
+- framework
+- moles
+- Testing
+- unit
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1449665569;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:110;}i:1;a:1:{s:2:"id";i:18;}i:2;a:1:{s:2:"id";i:154;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p><a href="http://research.microsoft.com/moles">Moles</a> es una nueva virguería de la gente de Microsoft Research; en concreto, del equipo de desarrollo de PEX, una herramienta de generación de tests white-box, para quien no lo conozca.</p>
+<p>¿Qué es Moles? Un nuevo framework que permite sustituir cualquier método de .NET por un delegado. ¿Y qué podemos hacer con esto? Pues sustituir cualquier llamada al framework por lo que queramos que se ejecute. Esto, evidentemente, tiene especial utilidad en el testeo unitario, donde necesitamos crear las condiciones adecuadas para ver cómo se comporta nuestro código. Un ejemplo sencillo, expuesto en <a href="http://channel9.msdn.com/posts/Peli/Moles-Replace-any-NET-method-with-a-delegate/">este vídeo por uno de sus creadores</a>, sería poder “trucar” la hora que nos devuelve DateTime.Now. Como sabemos, no se puede modificar pero… como Moles ¡sí! Si quieres saber cómo, échale un vistazo al vídeo.</p>
+<p>Yo voy a proponer un ejemplo distinto: acceder a las appSettings del ConfigurationManager. En el pasado tuve que modificar la signatura de un método que leía, internalmente, una propiedad de appSettings, para poder testearlo. La razón es que no tenía manera de simular las distintas condiciones (ausencia de la clave buscada, valor malformado, etc) puesto que la clase ConfigurationManager no podía mockearse. La solución al final fue pasarle al método la NameValueCollection que contiene las appSettings, pudiendo así simular mis condiciones de testeo.</p>
+<p>Pero no mola&#160; tener que modificar un método que ya tienes codificado por culpa de las limitaciones del framework de testeo. Aquí es donde Moles va a echarnos una mano. Veamos paso a paso cómo.</p>
+<p>Empecemos con el método que vamos a testear. Digamos que lee una variable de las appSettings y la retorna. Si no existe la clave o tiene un valor vacío, lanza una excepcion. El código podría ser algo así:</p>
+<p> <a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a>
+<pre class="code"><span style="color: gray">/// &lt;summary&gt;
+/// </span><span style="color: green">Retrieves app setting by its key.
+</span><span style="color: gray">/// &lt;/summary&gt;
+/// &lt;returns&gt;</span><span style="color: green">Value in the settings.</span><span style="color: gray">&lt;/returns&gt;
+</span><span style="color: blue">public static string </span>ExtractAppSetting()
+{
+    <span style="color: blue">string </span>key = <span style="color: #a31515">&quot;myKey&quot;</span>;
+    <span style="color: blue">if </span>(<span style="color: #2b91af">ConfigurationManager</span>.AppSettings.AllKeys.Contains(key) == <span style="color: blue">false </span>||
+        <span style="color: blue">string</span>.IsNullOrEmpty(<span style="color: #2b91af">ConfigurationManager</span>.AppSettings[key]) == <span style="color: blue">true</span>)
+    {
+        <span style="color: blue">throw new </span><span style="color: #2b91af">ConfigurationErrorsException</span>(<span style="color: #a31515">&quot;Key not found&quot;</span>);
+    }
+
+    <span style="color: blue">return </span><span style="color: #2b91af">ConfigurationManager</span>.AppSettings[key];
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Fácil, ¿no? El test más típico para este código sería aquél en el que previamente hemos configurado una key en la sección AppSettings del fichero App.config y después intentamos recuperarla mediante el método testeado. Suponiendo la existencia de una setting con key “myKey” y valor “myValue”, el siguiente test nos daría un bonito verde.</p>
+<pre class="code"><span style="color: gray">/// &lt;summary&gt;
+/// </span><span style="color: green">Test that checks if the method returns the 
+</span><span style="color: gray">/// </span><span style="color: green">appropriate value from AppSettings.
+</span><span style="color: gray">/// &lt;/summary&gt;
+</span>[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>ExtractAppSettingValidConfigurationOk()
+{
+    <span style="color: #2b91af">Assert</span>.AreEqual&lt;<span style="color: blue">string</span>&gt;(
+        <span style="color: #a31515">&quot;myvalue&quot;</span>, 
+        <span style="color: #2b91af">AppSettingsManager</span>.ExtractAppSetting(), 
+        <span style="color: #a31515">&quot;Invalid value in AppSettings&quot;</span>);
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a></p>
+<p>Bien, ¿y cómo podemos probar ahora el comportamiento de nuestro método si no existiera la key? Quizás, a la desesperada, nos podríamos plantear intentar modificar por código el fichero app.config. Sin embargo, esto no sería una buena idea porque los tests, de tener varios, se lanzan en hilos en paralelo, por lo que podríamos tener resultados inesperados si modificamos este fichero: las clásicas condiciones de carrera.</p>
+<p>La solución nos la aporta Moles. En primer lugar, añadimos una referencia al assembly que contiene la clase ConfigurationManager; es System.Configuration. Después, ya podemos añadir el fichero Moles a nuestro proyecto de testeo, como muestra la siguiente figura. El nombre que le daremos debería coincidir con el assembly que vamos a “molear” (¡toma palabro!).</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2010/02/AddingMolesFile.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="AddingMolesFile" border="0" alt="AddingMolesFile" src="{{ site.baseurl }}/assets/AddingMolesFile_thumb.png" width="323" height="227" /></a> </p>
+<p>Una vez creado el fichero Moles, ya podemos empezar a usar su “magia” en nuestro código de testeo. Creamos otro test, pero esta vez probará que el método lanza una excepción si las AppSettings están vacías y, por tanto, no contienen la key que estamos buscando. ¿Cómo se haría esto? Sencillo, usando el mole del ConfigurationManager, que nos dará la posibilidad de modificar la colección AppSettings.</p>
+<pre class="code"><span style="color: gray">/// &lt;summary&gt;
+/// </span><span style="color: green">Test that checks if the method throws an exception if 
+</span><span style="color: gray">/// </span><span style="color: green">the AppSettings is empty.
+</span><span style="color: gray">/// &lt;/summary&gt;
+</span>[<span style="color: #2b91af">TestMethod</span>]
+[<span style="color: #2b91af">ExpectedException</span>(<span style="color: blue">typeof</span>(<span style="color: #2b91af">ConfigurationErrorsException</span>))]
+<span style="color: blue">public void </span>ExtractAppSettingEmptySettingsExceptionExpected()
+{
+    <span style="color: #2b91af">MConfigurationManager</span>.AppSettingsGet = () =&gt; <span style="color: blue">new </span><span style="color: #2b91af">NameValueCollection</span>();
+    <span style="color: #2b91af">AppSettingsManager</span>.ExtractAppSetting();
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a>Aún nos quedaría un último paso, puesto que si lanzáramos el test ahora mismo nos daría una excepción en tiempo de ejecución indicándonos que tenemos que añadir el siguiente atributo para indicar que el test tiene que ejecutarse “hosteado” por Moles. El test quedaría así finalmente:</p>
+<pre class="code"><span style="color: gray">/// &lt;summary&gt;
+/// </span><span style="color: green">Test that checks if the method throws an exception if 
+</span><span style="color: gray">/// </span><span style="color: green">the AppSettings is empty.
+</span><span style="color: gray">/// &lt;/summary&gt;
+</span>[<span style="color: #2b91af">TestMethod</span>]
+[<span style="color: #2b91af">HostType</span>(<span style="color: #a31515">&quot;Moles&quot;</span>)]
+[<span style="color: #2b91af">ExpectedException</span>(<span style="color: blue">typeof</span>(<span style="color: #2b91af">ConfigurationErrorsException</span>))]
+<span style="color: blue">public void </span>ExtractAppSettingEmptySettingsExceptionExpected()
+{
+    <span style="color: #2b91af">MConfigurationManager</span>.AppSettingsGet = () =&gt; <span style="color: blue">new </span><span style="color: #2b91af">NameValueCollection</span>();
+    <span style="color: #2b91af">AppSettingsManager</span>.ExtractAppSetting();
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Y éste sería el resultado:</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2010/02/ExceptionFromMoles.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="ExceptionFromMoles" border="0" alt="ExceptionFromMoles" src="{{ site.baseurl }}/assets/ExceptionFromMoles_thumb.png" width="339" height="219" /></a> </p>
+<p>¿Cómo? ¿Una excepción en tiempo de ejecución? Pues sí, resulta que Moles no soporta la modificación del objeto System.Configuration.ConfigurationManager. En <a href="http://social.msdn.microsoft.com/Forums/en/pex/thread/3c5e77bf-2040-4849-a4d8-2298aad9ed48">este hilo lo explica</a> levemente uno de sus creadores. Así que en lugar de tirar la basura el post, he preferido indicar un ejemplo de su uso, aunque el final haya sido tan trágico como el de Seven.</p>
+<p>Otro día prometo postear un resultado correcto. En cualquier caso, Moles sigue siendo una tecnología a seguir, aunque con sus limitaciones.</p>
+<p>&#160;</p>
+<p>Bibliografía:</p>
+<ul>
+<li><a href="http://research.microsoft.com/en-us/projects/moles">Proyecto Moles en Microsoft Research</a></li>
+<li><a href="http://channel9.msdn.com/posts/Peli/Moles-Replace-any-NET-method-with-a-delegate/">Moles en Channel 9</a></li>
+<li><a href="http://www.leastprivilege.com/TestingSecurityCodeWithMoles.aspx">Ejemplo de uso de Moles con System.Thread.Thread</a></li>
+</ul>
+<p>Descargas:</p>
+<ul>
+<div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; display: inline; float: none; padding-top: 0px" id="scid:8eb9d37f-1541-4f29-b6f4-1eea890d4876:7f41a872-7437-4bef-bf9a-97fefe160425" class="wlWriterEditableSmartContent">
+<p />
+<div><a href="{{ site.baseurl }}/assets/uploads/2010/02/TestingWithMoles.zip" target="_self">ConfigurationManager con Moles</a></div>
+</div>
+</ul>

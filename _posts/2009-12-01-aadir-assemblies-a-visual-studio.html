@@ -1,0 +1,30 @@
+---
+layout: post
+title: Añadir assemblies a Visual Studio
+date: 2009-12-01 13:03:32.000000000 +00:00
+type: post
+published: true
+status: publish
+categories:
+- Visual Studio 2008
+tags:
+- add
+- assembly
+- GAC
+- reference
+- studio
+- visual
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1444875311;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:104;}i:1;a:1:{s:2:"id";i:109;}i:2;a:1:{s:2:"id";i:18;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Muchas veces necesitamos que un assembly esté en el GAC para no estar preocupados de incluirlo en cada proyecto. Simplemente, lo seleccionamos de la ventana “Add Reference” de Visual Studio, y somos felices con ello. Sin embargo, esta semana pasada me surgió la necesidad de añadir un assembly al GAC por mí mismo.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2009/12/AddReferenceWindow.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="AddReferenceWindow" border="0" alt="AddReferenceWindow" src="{{ site.baseurl }}/assets/AddReferenceWindow_thumb.png" width="722" height="640" /></a> </p>
+<p>No es que sea demasiado difícil, basta con copiarlo a c:windowsassembly. Hasta un tecnicoless podría hacerlo. Sin embargo, no apareció mágicamente en la ventana de Add Reference. ¿Qué había hecho mal? ¿Qué me faltaba? Buceando un poco por Internet encontré a un tipo <a href="http://weblogs.asp.net/jdanforth/archive/2003/12/16/43841.aspx">explicando cómo hacerlo</a> de 3 formas distintas.</p>
+<p>Huelga decir que elegí la más sencilla: copiar mi assembly a C:Program FilesMicrosoft Visual Studio 9.0Common7IDEPublicAssemblies</p>
+<p>Rearrancar el Visual Studio fue suficiente para ver mi assembly en la pestaña .NET. ¿Fácil no?</p>

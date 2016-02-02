@@ -1,0 +1,232 @@
+---
+layout: post
+title: 'Silverlight: Watermarked control'
+date: 2010-03-26 00:16:41.000000000 +00:00
+type: post
+published: true
+status: publish
+categories:
+- Silverlight
+tags:
+- password
+- Silverlight
+- textbox
+- watermarked
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1448683839;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:111;}i:1;a:1:{s:2:"id";i:121;}i:2;a:1:{s:2:"id";i:40;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Mi experiencia con Silverlight no está siendo todo lo placentera que me gustaría. Me estoy encontrado permanentemente en la necesidad de cambiar las cosas que presume por defecto esta tecnología, para adecuarla a mis necesidades.</p>
+<p>Una de ellas ha sido la creación de un control Textbox con marca de agua. Buscando un poco por Internet el primer enlace redirige al blog de Tim Heuer, donde tenemos un <a href="http://timheuer.com/blog/archive/2008/10/22/silverlight-watermark-text-box-control.aspx">ejemplo de implementación</a> de este control.</p>
+<p>El problema se plantea cuando se quiere utilizar este control para usarlo como control de password. No nos ofrece la posibilidad de enmascarar los caracteres. La solución podría ser algo como esto (no recuerdo si se me ocurrió a mí, lo leí por ahí o adapté algo que hubiera encontrado):</p>
+<pre class="code"><span style="color: gray">/// &lt;summary&gt;
+/// </span><span style="color: green">Changes the visual state when the control changes its text.
+</span><span style="color: gray">/// &lt;/summary&gt;
+/// &lt;param name="sender"&gt;</span><span style="color: green">Sender of the event.</span><span style="color: gray">&lt;/param&gt;
+/// &lt;param name="e"&gt;</span><span style="color: green">Event arguments.</span><span style="color: gray">&lt;/param&gt;</span><span style="color: green">&gt;
+</span><span style="color: blue">private void </span>OnTextChanged(<span style="color: blue">object </span>sender, <span style="color: #2b91af">TextChangedEventArgs </span>e)
+{
+    <span style="color: blue">if </span>(<span style="color: blue">this</span>.IsPasswordBox == <span style="color: blue">true</span>)
+    {
+        <span style="color: #2b91af">TextBox </span>textBox = sender <span style="color: blue">as </span><span style="color: #2b91af">TextBox</span>;
+        <span style="color: blue">if </span>(textBox != <span style="color: blue">null</span>)
+        {
+            <span style="color: blue">string </span>newText = textBox.Text;
+
+            <span style="color: green">// If we don't have text, clean the plain text back up.
+            </span><span style="color: blue">if </span>(<span style="color: blue">string</span>.IsNullOrEmpty(newText) == <span style="color: blue">true</span>)
+            {
+                <span style="color: blue">this</span>.Plaintext = <span style="color: blue">string</span>.Empty;
+                <span style="color: blue">return</span>;
+            }
+
+            <span style="color: green">// If the new text is shorter than the previous text, we simply cut the previous text
+            </span><span style="color: blue">if </span>(newText.Length &lt; <span style="color: blue">this</span>.Plaintext.Length)
+            {
+                <span style="color: blue">this</span>.Plaintext = <span style="color: blue">this</span>.Plaintext.Substring(0, newText.Length);
+                <span style="color: blue">return</span>;
+            }
+
+            <span style="color: green">// We have an string longer than the previous one. We can have a new character in any place
+            // inside the text, so we go along the string to find the new characters (probably only one).
+            // This new character will not be the "hidden" character
+            </span><span style="color: #2b91af">StringBuilder </span>newBackup = <span style="color: blue">new </span><span style="color: #2b91af">StringBuilder</span>();
+
+            <span style="color: green">// We will use the offset because every time we find a character in the new text that is clear,
+            // it is a new character. For example, if the new character is in the 5º position, and the next
+            // 6º character is hidden, it would be in the 5º position of the old text. So we use the offset
+            // to count in which place the character is in the old text.
+            </span><span style="color: blue">int </span>offset = 0;
+            <span style="color: blue">for </span>(<span style="color: blue">int </span>i = 0; i &lt; newText.Length; i++)
+            {
+                <span style="color: blue">if </span>(newText[i] == <span style="color: #a31515">'u25CF'</span>)
+                {
+                    <span style="color: green">// We add this character from the original plain text to the new one
+                    </span>newBackup.Append(<span style="color: blue">this</span>.Plaintext[i + offset]);
+                }
+                <span style="color: blue">else
+                </span>{
+                    <span style="color: green">// We add this character from the new text, because it's one of the new characters
+                    </span>newBackup.Append(newText[i]);
+
+                    <span style="color: green">// We must update the offset
+                    </span>offset--;
+
+                    <span style="color: green">// We must change this character in the new text for the hidden character.
+                    </span>newText = newText.Substring(0, i) + <span style="color: #a31515">'u25CF' </span>+ newText.Substring(i + 1, newText.Length - i - 1);
+                }
+            }
+
+            <span style="color: green">// Set the masked text in the control
+            </span>textBox.Text = newText;
+
+            <span style="color: green">// Move the caret to the end of the text
+            </span>textBox.SelectionStart = textBox.Text.Length;
+
+            <span style="color: green">// Update the backup plain text
+            </span><span style="color: blue">this</span>.Plaintext = newBackup.ToString();
+        }
+    }
+
+    <span style="color: blue">this</span>.ChangeVisualState(<span style="color: blue">true</span>);
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Por último, quedaría la validación del control. Por desgracia para los que no estamos muy informados sobre cómo funciona Silverlight, el ejemplo de Tim no incluía nada relacionado con la validación del control. Es decir, la validación en sí se realiza con mecanismos ajenos al control, como los Data Annotations. El problema es que, una vez validado el control y encontrado que no es correcta su información, es necesario que pase a un estado “No Válido” y que muestre alguna forma de error.</p>
+<p>Después de darle un poco de vueltas y echarle un vistazo a estilos de otros controles por defecto de Silverlight, ésta es la solución que me está funcionando a las mil maravillas (esta vez, sí, cosecha propia 100%).</p>
+<p>En primer lugar, el estilo para el control. Me voy a limitar a mostrar las partes directamente relacionadas con la validación, puesto que al final del artículo adjunto tanto el estilo del control como el código del mismo.</p>
+<pre class="code"><span style="color: blue">&lt;</span><span style="color: #a31515">VisualStateManager.VisualStateGroups</span><span style="color: blue">&gt;
+    &lt;</span><span style="color: #a31515">VisualStateGroup </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Name</span><span style="color: blue">="ValidationStates"&gt;
+        &lt;</span><span style="color: #a31515">VisualState </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Name</span><span style="color: blue">="Valid"/&gt;
+        &lt;</span><span style="color: #a31515">VisualState </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Name</span><span style="color: blue">="InvalidUnfocused"&gt;
+            &lt;</span><span style="color: #a31515">Storyboard</span><span style="color: blue">&gt;
+                &lt;</span><span style="color: #a31515">ObjectAnimationUsingKeyFrames </span><span style="color: red">Storyboard.TargetName</span><span style="color: blue">="ValidationErrorElement" </span><span style="color: red">Storyboard.TargetProperty</span><span style="color: blue">="Visibility"&gt;
+                    &lt;</span><span style="color: #a31515">DiscreteObjectKeyFrame </span><span style="color: red">KeyTime</span><span style="color: blue">="0"&gt;
+                        &lt;</span><span style="color: #a31515">DiscreteObjectKeyFrame.Value</span><span style="color: blue">&gt;
+                            &lt;</span><span style="color: #a31515">Visibility</span><span style="color: blue">&gt;</span><span style="color: #a31515">Visible</span><span style="color: blue">&lt;/</span><span style="color: #a31515">Visibility</span><span style="color: blue">&gt;
+                        &lt;/</span><span style="color: #a31515">DiscreteObjectKeyFrame.Value</span><span style="color: blue">&gt;
+                    &lt;/</span><span style="color: #a31515">DiscreteObjectKeyFrame</span><span style="color: blue">&gt;
+                &lt;/</span><span style="color: #a31515">ObjectAnimationUsingKeyFrames</span><span style="color: blue">&gt;
+            &lt;/</span><span style="color: #a31515">Storyboard</span><span style="color: blue">&gt;
+        &lt;/</span><span style="color: #a31515">VisualState</span><span style="color: blue">&gt;
+        &lt;</span><span style="color: #a31515">VisualState </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Name</span><span style="color: blue">="InvalidFocused"&gt;
+            &lt;</span><span style="color: #a31515">Storyboard</span><span style="color: blue">&gt;
+                &lt;</span><span style="color: #a31515">ObjectAnimationUsingKeyFrames </span><span style="color: red">Storyboard.TargetName</span><span style="color: blue">="ValidationErrorElement" </span><span style="color: red">Storyboard.TargetProperty</span><span style="color: blue">="Visibility"&gt;
+                    &lt;</span><span style="color: #a31515">DiscreteObjectKeyFrame </span><span style="color: red">KeyTime</span><span style="color: blue">="0"&gt;
+                        &lt;</span><span style="color: #a31515">DiscreteObjectKeyFrame.Value</span><span style="color: blue">&gt;
+                            &lt;</span><span style="color: #a31515">Visibility</span><span style="color: blue">&gt;</span><span style="color: #a31515">Visible</span><span style="color: blue">&lt;/</span><span style="color: #a31515">Visibility</span><span style="color: blue">&gt;
+                        &lt;/</span><span style="color: #a31515">DiscreteObjectKeyFrame.Value</span><span style="color: blue">&gt;
+                    &lt;/</span><span style="color: #a31515">DiscreteObjectKeyFrame</span><span style="color: blue">&gt;
+                &lt;/</span><span style="color: #a31515">ObjectAnimationUsingKeyFrames</span><span style="color: blue">&gt;
+                &lt;</span><span style="color: #a31515">ObjectAnimationUsingKeyFrames </span><span style="color: red">Storyboard.TargetName</span><span style="color: blue">="validationTooltip" </span><span style="color: red">Storyboard.TargetProperty</span><span style="color: blue">="IsOpen"&gt;
+                    &lt;</span><span style="color: #a31515">DiscreteObjectKeyFrame </span><span style="color: red">KeyTime</span><span style="color: blue">="0"&gt;
+                        &lt;</span><span style="color: #a31515">DiscreteObjectKeyFrame.Value</span><span style="color: blue">&gt;
+                            &lt;</span><span style="color: #a31515">System</span><span style="color: blue">:</span><span style="color: #a31515">Boolean</span><span style="color: blue">&gt;</span><span style="color: #a31515">True</span><span style="color: blue">&lt;/</span><span style="color: #a31515">System</span><span style="color: blue">:</span><span style="color: #a31515">Boolean</span><span style="color: blue">&gt;
+                        &lt;/</span><span style="color: #a31515">DiscreteObjectKeyFrame.Value</span><span style="color: blue">&gt;
+                    &lt;/</span><span style="color: #a31515">DiscreteObjectKeyFrame</span><span style="color: blue">&gt;
+                &lt;/</span><span style="color: #a31515">ObjectAnimationUsingKeyFrames</span><span style="color: blue">&gt;
+            &lt;/</span><span style="color: #a31515">Storyboard</span><span style="color: blue">&gt;
+        &lt;/</span><span style="color: #a31515">VisualState</span><span style="color: blue">&gt;
+    &lt;/</span><span style="color: #a31515">VisualStateGroup</span><span style="color: blue">&gt;
+&lt;/</span><span style="color: #a31515">VisualStateManager.VisualStateGroups</span><span style="color: blue">&gt;
+&lt;</span><span style="color: #a31515">Border </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Name</span><span style="color: blue">="ValidationErrorElement"
+        </span><span style="color: red">Visibility</span><span style="color: blue">="Collapsed"
+        </span><span style="color: red">BorderBrush</span><span style="color: blue">="#FFDB000C"
+        </span><span style="color: red">BorderThickness</span><span style="color: blue">="1"
+        &gt;
+    &lt;</span><span style="color: #a31515">ToolTipService.ToolTip</span><span style="color: blue">&gt;
+        &lt;</span><span style="color: #a31515">ToolTip </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Name</span><span style="color: blue">="validationTooltip" </span><span style="color: red">Template</span><span style="color: blue">="{</span><span style="color: #a31515">StaticResource </span><span style="color: red">CommonValidationToolTipTemplate</span><span style="color: blue">}"
+            </span><span style="color: red">DataContext</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">RelativeSource</span><span style="color: blue">={</span><span style="color: #a31515">RelativeSource </span><span style="color: red">TemplatedParent</span><span style="color: blue">}}" </span><span style="color: red">Placement</span><span style="color: blue">="Right"
+            </span><span style="color: red">PlacementTarget</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">RelativeSource</span><span style="color: blue">={</span><span style="color: #a31515">RelativeSource </span><span style="color: red">TemplatedParent</span><span style="color: blue">}}"&gt;
+            &lt;</span><span style="color: #a31515">ToolTip.Triggers</span><span style="color: blue">&gt;
+                &lt;</span><span style="color: #a31515">EventTrigger </span><span style="color: red">RoutedEvent</span><span style="color: blue">="Canvas.Loaded"&gt;
+                    &lt;</span><span style="color: #a31515">BeginStoryboard</span><span style="color: blue">&gt;
+                        &lt;</span><span style="color: #a31515">Storyboard</span><span style="color: blue">&gt;
+                            &lt;</span><span style="color: #a31515">ObjectAnimationUsingKeyFrames </span><span style="color: red">Storyboard.TargetName</span><span style="color: blue">="validationTooltip" </span><span style="color: red">Storyboard.TargetProperty</span><span style="color: blue">="IsHitTestVisible"&gt;
+                                &lt;</span><span style="color: #a31515">DiscreteObjectKeyFrame </span><span style="color: red">KeyTime</span><span style="color: blue">="0"&gt;
+                                    &lt;</span><span style="color: #a31515">DiscreteObjectKeyFrame.Value</span><span style="color: blue">&gt;
+                                        &lt;</span><span style="color: #a31515">System</span><span style="color: blue">:</span><span style="color: #a31515">Boolean</span><span style="color: blue">&gt;</span><span style="color: #a31515">true</span><span style="color: blue">&lt;/</span><span style="color: #a31515">System</span><span style="color: blue">:</span><span style="color: #a31515">Boolean</span><span style="color: blue">&gt;
+                                    &lt;/</span><span style="color: #a31515">DiscreteObjectKeyFrame.Value</span><span style="color: blue">&gt;
+                                &lt;/</span><span style="color: #a31515">DiscreteObjectKeyFrame</span><span style="color: blue">&gt;
+                            &lt;/</span><span style="color: #a31515">ObjectAnimationUsingKeyFrames</span><span style="color: blue">&gt;
+                        &lt;/</span><span style="color: #a31515">Storyboard</span><span style="color: blue">&gt;
+                    &lt;/</span><span style="color: #a31515">BeginStoryboard</span><span style="color: blue">&gt;
+                &lt;/</span><span style="color: #a31515">EventTrigger</span><span style="color: blue">&gt;
+            &lt;/</span><span style="color: #a31515">ToolTip.Triggers</span><span style="color: blue">&gt;
+        &lt;/</span><span style="color: #a31515">ToolTip</span><span style="color: blue">&gt;
+    &lt;/</span><span style="color: #a31515">ToolTipService.ToolTip</span><span style="color: blue">&gt;
+    &lt;</span><span style="color: #a31515">Grid </span><span style="color: red">Height</span><span style="color: blue">="12" </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Right"
+          </span><span style="color: red">Margin</span><span style="color: blue">="1,-4,-4,0" </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Top"
+          </span><span style="color: red">Width</span><span style="color: blue">="12" </span><span style="color: red">Background</span><span style="color: blue">="Transparent"&gt;
+        &lt;</span><span style="color: #a31515">Path </span><span style="color: red">Fill</span><span style="color: blue">="#FFDC000C" </span><span style="color: red">Margin</span><span style="color: blue">="1,3,0,0" </span><span style="color: red">Data</span><span style="color: blue">="M 1,0 L6,0 A 2,2 90 0 1 8,2 L8,7 z"/&gt;
+        &lt;</span><span style="color: #a31515">Path </span><span style="color: red">Fill</span><span style="color: blue">="#ffffff" </span><span style="color: red">Margin</span><span style="color: blue">="1,3,0,0" </span><span style="color: red">Data</span><span style="color: blue">="M 0,0 L2,0 L 8,6 L8,8"/&gt;
+    &lt;/</span><span style="color: #a31515">Grid</span><span style="color: blue">&gt;
+&lt;/</span><span style="color: #a31515">Border</span><span style="color: blue">&gt;</span></pre>
+<p>A destacar especialmente que hay dos partes claramente diferenciadas en el estilo:</p>
+<ul>
+<li>La parte en la que se definen el grupo de estados “ValidationStates”, formado por los estados “Valid”, “InvalidUnfocused” y “InvalidFocused”. Con estos tres cubriríamos todas las posibilidades relacionadas con el estado del control y su validación.</li>
+<li>La otra parte relevante del estilo es la definición de un elemento “ValidationErrorElement”, que junto al tooltip nos permite marcar, en este caso en rojo, el control que ha fallado y mostrar un mensaje con información del error.</li>
+</ul>
+<p>La segunda parte de este truco consiste en definir las transacciones correspondientes entre los estados del control así como dispararlas ante eventos concretos que acontezcan en el control. En este caso, es necesario definir una propiedad “isErroneous” para indicar cuándo el control ha pasado al estado erróneo. Esta propiedad la controlaremos conectándonos al evento BindingValidationError, tal como se muestra en el siguiente extracto del código del control:</p>
+<pre class="code"><span style="color: gray">/// &lt;summary&gt;
+/// </span><span style="color: green">Indicates if the control is in an erroneous state.
+</span><span style="color: gray">/// &lt;/summary&gt;
+</span><span style="color: blue">private bool </span>isErroneous;
+
+<span style="color: gray">/// &lt;summary&gt;
+/// </span><span style="color: green">Initializes a new instance of the </span><span style="color: gray">&lt;see cref="WatermarkedTextBox"/&gt; </span><span style="color: green">class.
+</span><span style="color: gray">/// &lt;/summary&gt;
+</span><span style="color: blue">public </span>WatermarkedTextBox()
+{
+    <span style="color: blue">this</span>.BindingValidationError += <span style="color: blue">new </span><span style="color: #2b91af">EventHandler</span>&lt;<span style="color: #2b91af">ValidationErrorEventArgs</span>&gt;(WatermarkedTextBox_BindingValidationError);
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a>El código que vamos a ligar al evento es tan sencillo como lo que podemos ver a continuación:</p>
+<pre class="code"><span style="color: gray">/// &lt;summary&gt;
+/// </span><span style="color: green">Configures the properties of the control to indicate it has an error.
+</span><span style="color: gray">/// &lt;/summary&gt;
+/// &lt;param name="sender"&gt;</span><span style="color: green">Sender of the event.</span><span style="color: gray">&lt;/param&gt;
+/// &lt;param name="e"&gt;</span><span style="color: green">Event arguments.</span><span style="color: gray">&lt;/param&gt;
+</span><span style="color: blue">private void </span>WatermarkedTextBox_BindingValidationError(<span style="color: blue">object </span>sender, <span style="color: #2b91af">ValidationErrorEventArgs </span>e)
+{
+    <span style="color: blue">this</span>.isErroneous = e.Action == <span style="color: #2b91af">ValidationErrorEventAction</span>.Added ? <span style="color: blue">true </span>: <span style="color: blue">false</span>;
+    <span style="color: blue">this</span>.ChangeVisualState(<span style="color: blue">true</span>);
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Controlando la acción que acompaña como argumento al evento, podremos saber si la función ha saltado porque el control ha entrado o ha salido del estado erróneo. Toda la lógica, y por tanto lo relevante, queda relegado al método ChangeVisualState. Este método controlará las transacciones entre los distintos estados en los que puede estar el control. Un extracto de este método, específico para la parte de validación de errores, en el siguiente fragmento:</p>
+<pre class="code"><span style="color: gray">/// &lt;summary&gt;
+/// </span><span style="color: green">Change to the correct visual state for the textbox.
+</span><span style="color: gray">/// &lt;/summary&gt;
+/// &lt;param name="useTransitions"&gt;
+/// </span><span style="color: green">true to use transitions when updating the visual state, false to
+</span><span style="color: gray">/// </span><span style="color: green">snap directly to the new visual state.
+</span><span style="color: gray">/// &lt;/param&gt;
+</span><span style="color: blue">private void </span>ChangeVisualState(<span style="color: blue">bool </span>useTransitions)
+{
+
+    <span style="color: green">// Update the ValidationStates group
+    </span><span style="color: blue">if </span>(<span style="color: blue">this</span>.hasFocus &amp;&amp; <span style="color: blue">this</span>.isErroneous)
+    {
+        <span style="color: #2b91af">VisualStateHelper</span>.GoToState(<span style="color: blue">this</span>, useTransitions, <span style="color: #2b91af">VisualStateHelper</span>.InvalidFocused, <span style="color: #2b91af">VisualStateHelper</span>.InvalidUnfocused);
+    }
+    <span style="color: blue">else if </span>(<span style="color: blue">this</span>.isErroneous)
+    {
+        <span style="color: #2b91af">VisualStateHelper</span>.GoToState(<span style="color: blue">this</span>, useTransitions, <span style="color: #2b91af">VisualStateHelper</span>.InvalidUnfocused);
+    }
+    <span style="color: blue">else
+    </span>{
+        <span style="color: #2b91af">VisualStateHelper</span>.GoToState(<span style="color: blue">this</span>, useTransitions, <span style="color: #2b91af">VisualStateHelper</span>.StateValid);
+    }
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a>Cómo se puede ver, dependiendo de si el control tiene foco o no, se pasa a los distintos estados inválidos en caso de existir errores. Caso de no haberlos, se pasa a un estado de validez que desactiva los adornos de estilo informativos.</p>
+<p>El resultado es un control que se comporta igual que los textbox por defecto de Silverlight, a pesar de ser totalmente personalizado. En cualquier caso, cambiar el aspecto que mostrará al entrar en estado erróneo es tan sencillo como modificar el estilo.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2010/03/Ejemplo.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="Ejemplo" src="{{ site.baseurl }}/assets/Ejemplo_thumb.png" border="0" alt="Ejemplo" width="373" height="166" /></a></p>
+<p>Descargas:</p>
+<ul>
+<li> <a href="{{ site.baseurl }}/assets/uploads/2010/03/WatermarkedTextbox.cs.txt">Watermarked Textbox</a></li>
+<li><a href="{{ site.baseurl }}/assets/uploads/2010/03/ControlTemplates.xaml">Control Template</a></li>
+</ul>
+<p>PD: Perdonad los comentarios en inglés en el código, pero es para un proyecto de la empresa en la que trabajo y la pereza me impide ponerme a traducirlo todo :)</p>

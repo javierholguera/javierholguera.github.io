@@ -1,0 +1,37 @@
+---
+layout: post
+title: Por qué hacemos self = this en JS?
+date: 2015-01-01 17:55:54.000000000 +00:00
+type: post
+published: true
+status: publish
+categories:
+- Javascript
+tags:
+- Javascript KnockoutJS JS this
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1450456572;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:1801;}i:1;a:1:{s:2:"id";i:18;}i:2;a:1:{s:2:"id";i:123;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Cuando empecé a utilizar Knockout JS, descubrí que existía una cierta convención según la cual, al crear la función Constructor del modelo que se “<em>bindea</em>” con Knockout, la primera línea siempre era la siguiente:</p>
+<blockquote><p>var self = this;</p>
+</blockquote>
+<p>No tenía ni idea de porqué se hacía esto, pero entendía que era necesario para, posteriormente, poder definir y añadir los distintos métodos y propiedades que formaban el modelo.</p>
+<p>Ahora, gracias a los vídeos de “JavaScript The Good Parts” de Douglas Crockford en Pluralsight, por fin sé el porqué de esta misteriosa pero indispensable línea. Y las razones son realmente dos.</p>
+<h4>Una función anidada no tiene acceso al <em>this</em> externo</h4>
+<p>Como bien explica Douglas, cuando dentro de una función definimos otra función, la función anidada no tiene acceso al puntero <em>this</em> que la función externa ha recibido.</p>
+<p>Para superar esta limitación, en ocasiones veremos código en el que se define una línea como la siguiente.</p>
+<blockquote><p>var that = this;</p>
+</blockquote>
+<p>Con esto lo que conseguimos es capturar en la función superior el puntero <em>this</em>, para posteriormente permitir a la función anidada acceder a la variable <em>that</em> que contendrá el mismo valor que contenía <em>this</em> cuando fue capturado.</p>
+<p>Exactamente la misma técnica es la que estaremos aplicando al capturar <em>this</em> en una variable de nombre <em>self</em>. De esta forma las distintas funciones que crearemos como parte de la definición del modelo, podrán acceder al <em>this</em> que originalmente recibió la función constructora.</p>
+<p>Pero, por qué querríamos acceder a ese <em>this</em> original que la función constructora recibe? Aquí entra en juego el segundo principio que define esta técnica.</p>
+<h4>La función constructora recibe el nuevo objeto en <em>this</em></h4>
+<p>Esta es la otra clave de esta técnica. Cuando una función se invoca con el operador <em>new</em> (como hacemos al crear el modelo), se crea un nuevo objeto y se asigna al puntero <em>this</em> que recibe la función que estamos invocando con el operador.</p>
+<p>Esto a efectos prácticos significa que el <em>this</em> que recibiremos en la función constructora es el propio nuevo objeto al que estaremos añadiendo propiedades y métodos como parte del código de dicha función.</p>
+<p>De este peculiar modo nuestra función constructora no sólo inicializa el objeto como haría un constructor de un lenguaje estático como Java o C#, sino que también añade la propia funcionalidad al asignar funciones y propiedades.</p>

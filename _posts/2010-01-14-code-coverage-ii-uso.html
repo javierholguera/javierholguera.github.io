@@ -1,0 +1,33 @@
+---
+layout: post
+title: 'Code Coverage (II): Uso'
+date: 2010-01-14 11:18:00.000000000 +00:00
+type: post
+published: true
+status: publish
+categories:
+- Visual Studio 2008
+tags:
+- '2008'
+- code
+- coverage
+- studio
+- visual
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1449916540;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:18;}i:1;a:1:{s:2:"id";i:109;}i:2;a:1:{s:2:"id";i:291;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Una vez que tenemos activado el Code Coverage para un ensamblado y tras lanzar los correspondientes tests, ver los resultados es una mera cuestión de abrir la pestaña de “Code Coverage Results”, que si no es visible se puede activar en el menú “Test – Windows – Code Coverage Results”.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2010/01/CodeCoverageResults.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="CodeCoverageResults" border="0" alt="CodeCoverageResults" src="{{ site.baseurl }}/assets/CodeCoverageResults_thumb.png" width="450" height="119" /></a> </p>
+<p>En la ventana de ejemplo se puede ver cómo los resultados se gestionan, en primer lugar, por ensamblado ; y dentro del ensamblado , cómo se pueden ir expandiendo los diferentes espacios de nombres, clases y, por último, métodos. Sin duda, una gran granularidad que nos permite saber con precisión dónde estamos quedándonos cortos en el testeo.</p>
+<p>Pero, si esta ayuda es buena, tener el código coloreado indicando qué partes han sido ejecutadas durante el testeo y cuáles no, sería aún mejor, ¿verdad? Basta con pulsar el botón “Show Code Coverage Coloring”, el tercero por la derecha en la ventana de “Code Coverage Results”, para obtener algo como la siguiente imagen.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2010/01/ColoredCode.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="ColoredCode" border="0" alt="ColoredCode" src="{{ site.baseurl }}/assets/ColoredCode_thumb.png" width="437" height="186" /></a> </p>
+<p>¡Genial! Ahora no sólo sé la cantidad de código que me falta por testear, sino que incluso sé qué para qué código necesito escribir nuevos tests. Vale, esto se salta totalmente los principios de TDD, pero la vida no siempre es maravillosa…</p></p>
+<p>Un último apunte para terminar: he comprobado (en mis carnes) que algunos proyectos dan problemas al intentar configurar los ensamblados a los que se les va a calcular la cobertura de código.</p>
+<p>Los síntomas son sencillos: abrimos el .testrunconfig, pinchamos en “Code Coverage”, y la ventana se cierra sin emitir ningún error. No soy el <a href="http://social.msdn.microsoft.com/Forums/en-US/vststest/thread/28b2e127-ca9c-4dcd-8723-edfa45f8989e/">primero al que le pasa</a> y aunque está <a href="https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=329882">reportado como bug</a>, aparentemente sigue sin solucionarse.</p>
+<p>La forma de evitarlo es tan chapucera como útil: simplemente hay que hacer el unload de algunos proyectos que son los que dan problemas. A mí, personalmente, me ha ocurrido exclusivamente con los proyectos de base de datos, pero parece ser que también existen problemas con proyectos WSSF. Avisados quedáis.</p>

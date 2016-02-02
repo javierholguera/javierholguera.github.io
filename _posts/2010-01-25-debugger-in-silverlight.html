@@ -1,0 +1,29 @@
+---
+layout: post
+title: Debugger in Silverlight
+date: 2010-01-25 11:25:36.000000000 +00:00
+type: post
+published: true
+status: publish
+categories:
+- Visual Studio 2008
+tags:
+- debugger
+- Silverlight
+- symbols
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1446216670;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:64;}i:1;a:1:{s:2:"id";i:121;}i:2;a:1:{s:2:"id";i:111;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Este fin de semana perdí una cantidad considerable de tiempo porque no me funcionaba el debugger en Silverlight. Básicamente, me salían esos simpáticos mensajes que aparece en Visual Studio cuando un breakpoint no se va a ejecutar: </p>
+<blockquote><p>The break point currently will not be hit , no symbols have been loaded to this document</p>
+</blockquote>
+<p>¿Por qué? ¡¿Por qué?! Me preguntaba yo, intentando depurar una aplicación que estaba comportándose de forma incorrecta. Pues bien, la solución es tan sencilla, de esas que por suerte no se olvidan. Basta con activarlo dirigiéndose a las propiedades del proyecto ASP.NET que estará hosteando nuestro control Silverlight. </p>
+<p>En las propiedades, bajo la pestaña Web, en la parte inferior de la pantalla se puede ver un menú como el de la siguiente imagen. Basta activar el checkbox correspondiente a Silverlight para que nuestro depurador favorito funcione de nuevo correctamente.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2010/01/SilverlightDebugger.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="SilverlightDebugger" border="0" alt="SilverlightDebugger" src="{{ site.baseurl }}/assets/SilverlightDebugger_thumb.png" width="621" height="87" /></a> </p>
+<p>Espero que esto le sirva a alguien para perder menos tiempo del que perdí yo.</p>

@@ -1,0 +1,99 @@
+---
+layout: post
+title: 'Silverlight: Binding de textboxs a propiedades nullables'
+date: 2010-08-13 16:12:55.000000000 +01:00
+type: post
+published: true
+status: publish
+categories:
+- Silverlight
+tags:
+- Binding
+- nullable
+- property
+- Silverlight
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1449273310;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:121;}i:1;a:1:{s:2:"id";i:64;}i:2;a:1:{s:2:"id";i:26;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>No descubro nada si digo que Silverlight tiene un magnífico sistema de binding, con el que nos podemos ahorrar muchísimo “code behind”. Sin embargo, me he encontrado un extraño comportamiento cuando se combina con propiedades nulables, como serían int?. Mi escenario era el siguiente:</p>
+<ul>
+<li>Un textbox bindeado a una propiedad int? en una entidad que era el data context de mi control</li>
+<li>Un botón que, al pulsarlo, lanzaba de forma manual el checkeo de los bindings de todos los textboxs, incluido el anterior (método UpdateSource del binding)</li>
+<li>Todos los métodos set de las propiedades son correctamente invocados, menos el de mi propiedad nulable.</li>
+</ul>
+<p>¿Por qué? Además, como corolario, todos aquellos que no estaban correctamente formateados, se marcaban con el correspondiente borde rojo, incluido el que aparentemente no había llegado a checkearse. Y por si esto no fuera suficiente misterio, el mensaje que acompañaba al borde rojo, aparentemente había salido de ninguna parte; yo no lo había definido.</p>
+<p>&#160;</p>
+<h6>MISTERIO DESENTREAÑADO</h6>
+<p>Después de buscar bastante por Internet, llegué a <a href="http://jeffhandley.com/archive/2008/07/09/binding-to-nullable-values-in-xaml.aspx">esta página</a> en la que explicaban el porqué de la situación. Al parecer, los bindings de Silverlight no se actualizan cuando no son capaces de deducir si el valor del control, es “casteable” a la propiedad que se está intentando asignar.</p>
+<p>En mi caso, el textbox, al estar vacío, provocaba que el binding no supiera convertir un string.Empty a un int?, algo lógico por otra parte. De ahí que el método set de la propiedad nunca llegara a llamarse. La última pieza del misterio, el mensaje salido de la nada, era responsabilidad del propio binding, avisando de que no es capaz de hacer la conversión.</p>
+<p>&#160;</p>
+<h6>La solución</h6>
+<p>Ahora que ya sabemos el porqué, lo mejor es saber cómo resolverlo. Es fácil, necesitamos que “algo” convierta los valores que el binding no va a ser capaz de resolver, a valores que sí sean asignables a nuestras propiedades nulables. Por ejemplo, que cada string.Empty o puñado de caracteres vacíos, se conviertan en un null, algo con lo que el binding sí va a poder manejarse y setear en nuestra propiedades. En definitiva, necesitamos un Converter. Un ejemplo de uno totalmente funcional lo tenéis a continuación:</p>
+<pre class="code"><span style="color: gray">/// &lt;summary&gt;
+/// </span><span style="color: green">Class that converts a value from an UI control to a nullable property value.
+</span><span style="color: gray">/// &lt;/summary&gt;
+/// &lt;remarks&gt;</span><span style="color: green">This class intents to resolve a &quot;gap&quot; in the Silverlight binding model.
+</span><span style="color: gray">/// </span><span style="color: green">Currently, the binding model is not able to invoke the setter of a nullable property, if
+</span><span style="color: gray">/// </span><span style="color: green">the value inside the control is empty.
+</span><span style="color: gray">/// </span><span style="color: green">Silverlight binding mechanism always avoids to invoke a setter if it is not sure how to
+</span><span style="color: gray">/// </span><span style="color: green">represent the type of the property to which is binded. For example, in a textbox with an empty
+</span><span style="color: gray">/// </span><span style="color: green">value for Text property, it will not set this value to a int? property in the underlying model.
+</span><span style="color: gray">/// &lt;/remarks&gt;
+</span><span style="color: blue">public class </span><span style="color: #2b91af">NullableValueConverter </span>: <span style="color: #2b91af">IValueConverter
+</span>{
+    <span style="color: blue">#region </span>IValueConverter Members
+
+    <span style="color: gray">/// &lt;summary&gt;
+    /// </span><span style="color: green">Converts a value from the underlying entity into its UI control representation.
+    </span><span style="color: gray">/// &lt;/summary&gt;
+    /// &lt;param name=&quot;value&quot;&gt;</span><span style="color: green">Value to convert.</span><span style="color: gray">&lt;/param&gt;
+    /// &lt;param name=&quot;targetType&quot;&gt;</span><span style="color: green">Target type.</span><span style="color: gray">&lt;/param&gt;
+    /// &lt;param name=&quot;parameter&quot;&gt;</span><span style="color: green">Conversion parameter.</span><span style="color: gray">&lt;/param&gt;
+    /// &lt;param name=&quot;culture&quot;&gt;</span><span style="color: green">Culture to use in the conversion.</span><span style="color: gray">&lt;/param&gt;
+    /// &lt;returns&gt;</span><span style="color: green">Object converted.</span><span style="color: gray">&lt;/returns&gt;
+    </span><span style="color: blue">public object </span>Convert(<span style="color: blue">object </span>value, <span style="color: #2b91af">Type </span>targetType, <span style="color: blue">object </span>parameter, System.Globalization.<span style="color: #2b91af">CultureInfo </span>culture)
+    {
+        <span style="color: blue">return </span>value;
+    }
+
+    <span style="color: gray">/// &lt;summary&gt;
+    /// </span><span style="color: green">Converts a value from a UI control to its representation in the underlying entity.
+    </span><span style="color: gray">/// &lt;/summary&gt;
+    /// &lt;param name=&quot;value&quot;&gt;</span><span style="color: green">Value to convert.</span><span style="color: gray">&lt;/param&gt;
+    /// &lt;param name=&quot;targetType&quot;&gt;</span><span style="color: green">Target type.</span><span style="color: gray">&lt;/param&gt;
+    /// &lt;param name=&quot;parameter&quot;&gt;</span><span style="color: green">Conversion parameter.</span><span style="color: gray">&lt;/param&gt;
+    /// &lt;param name=&quot;culture&quot;&gt;</span><span style="color: green">Culture to use in the conversion.</span><span style="color: gray">&lt;/param&gt;
+    /// &lt;returns&gt;</span><span style="color: green">Object converted.</span><span style="color: gray">&lt;/returns&gt;
+    </span><span style="color: blue">public object </span>ConvertBack(<span style="color: blue">object </span>value, <span style="color: #2b91af">Type </span>targetType, <span style="color: blue">object </span>parameter, System.Globalization.<span style="color: #2b91af">CultureInfo </span>culture)
+    {
+        <span style="color: blue">string </span>castedValue = (<span style="color: blue">string</span>)value;
+        <span style="color: blue">if </span>(<span style="color: blue">string</span>.IsNullOrEmpty(castedValue) == <span style="color: blue">true </span>|| castedValue.Trim().Length == 0)
+        {
+            <span style="color: blue">return null</span>;
+        }
+
+        <span style="color: blue">return </span>value;
+    }
+
+    <span style="color: blue">#endregion
+</span>}</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>&#160;</p>
+<p>Y ya lo único que nos faltaría sería utilizarlo en nuestro código XAML, en dos pasos. El primero, definirlo como recurso dentro del XAML en que vamos a usarlo:</p>
+<pre class="code"><span style="color: blue">&lt;</span><span style="color: #a31515">UserControl.Resources</span><span style="color: blue">&gt;        
+        &lt;</span><span style="color: #a31515">controls</span><span style="color: blue">:</span><span style="color: #a31515">NullableValueConverter </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Key</span><span style="color: blue">=&quot;NullableValueConverter&quot;/&gt;
+    &lt;/</span><span style="color: #a31515">UserControl.Resources</span><span style="color: blue">&gt;
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>&#160;</p>
+<p>Y el segundo, asociándolo al binding que hemos establecido entre el control y la propiedad nulable.</p>
+<pre class="code"><span style="color: red">Text</span><span style="color: blue">=&quot;{</span><span style="color: #a31515">Binding </span><span style="color: red">MyNullableProperty</span><span style="color: blue">, </span><span style="color: red">Mode</span><span style="color: blue">=TwoWay, </span><span style="color: red">NotifyOnValidationError</span><span style="color: blue">=true, </span><span style="color: red">ValidatesOnExceptions</span><span style="color: blue">=true, </span><span style="color: red">Converter</span><span style="color: blue">={</span><span style="color: #a31515">StaticResource </span><span style="color: red">NullableValueConverter</span><span style="color: blue">}}&quot;
+</span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Y esto es todo. Espero que os sea de utilidad.</p>

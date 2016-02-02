@@ -1,0 +1,39 @@
+---
+layout: post
+title: Instalar Windows 7 en Windows Virtual PC
+date: 2010-01-26 12:35:35.000000000 +00:00
+type: post
+published: true
+status: publish
+categories:
+- Windows 7
+tags:
+- virtual pc
+- Windows 7
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1450603138;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:225;}i:1;a:1:{s:2:"id";i:104;}i:2;a:1:{s:2:"id";i:162;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Después de buscar un rato en <strike>Google</strike> Bing, no he visto ningún post sobre cómo instalar Windows 7 en una máquina con Windows Virtual PC. Puede resultar contradictorio puesto que Windows Virtual PC sólo funciona en Windows 7, pero ¿a quién no le ha hecho falta una máquina virtual con la que trastear? Prácticamente para eso se crearon las máquinas virtuales, ¿no? ;)</p>
+<p>Pues bien, yo necesito una máquina con Windows 7 para instalar sobre ella Visual Studio 2010. Esto es lo que he hecho para tenerla.</p>
+<h5>Descarga e instalación</h5>
+<p>La descarga la he hecho de esta dirección: <a title="http://www.microsoft.com/windows/virtual-pc/" href="http://www.microsoft.com/windows/virtual-pc/">http://www.microsoft.com/windows/virtual-pc/</a>. De los dos ficheros que indicaba que era necesario descargar, sólo lo he hecho con “Windows Virtual PC”, puesto que no me iba a hacer falta el “Windows XP Mode”.</p>
+<p>Una vez bajado, la instalación es un simple doble click –&gt; next –&gt; next. Eso sí, es necesario reiniciar y tanto al apagarse como al volverse a arrancar, está un tiempo configurando esta nueva instalación.</p>
+<p>Al volver a arrancar, podremos ver en el menú de inicio un nuevo enlace de nombre “Windows Virtual PC”. Pulsarlo nos llevará una ventana como la que aparece en la siguiente imagen.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2010/01/VirtualMachinesWindow.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="VirtualMachinesWindow" border="0" alt="VirtualMachinesWindow" src="{{ site.baseurl }}/assets/VirtualMachinesWindow_thumb.png" width="244" height="230" /></a> </p>
+<h5>Nueva máquina virtual</h5>
+<p>Ya tenemos la aplicación instalada, es momento de crear la primera máquina virtual. El proceso no puede ser más sencillo. Lo primero es pulsar el botón “Create Virtual Machine”, que aparece en la ventana anterior. Esto nos lanzará un cuadro de diálogo para crear una nueva máquina virtual, que comienza con darnos la opción de definir el nombre de esta nueva máquina, como se muestra en la siguiente imagen.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2010/01/VirtualMachineName.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="VirtualMachineName" border="0" alt="VirtualMachineName" src="{{ site.baseurl }}/assets/VirtualMachineName_thumb.png" width="244" height="189" /></a> </p>
+<p>El siguiente paso es indicar la cantidad de memoria RAM que queremos que tenga disponible la máquina virtual. Mucho ojo con esto porque, en el momento de lanzar la máquina virtual, tendrá que estar libre dicha cantidad de memoria RAM, pues de lo contrario no arrancará la máquina. La siguiente imagen muestra este paso en el cuadro de diálogo.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2010/01/VirtualMachineMemory.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="VirtualMachineMemory" border="0" alt="VirtualMachineMemory" src="{{ site.baseurl }}/assets/VirtualMachineMemory_thumb.png" width="244" height="189" /></a> </p>
+<p>Por último, debemos indicar qué clase de disco duro vamos a manejar. Las opciones principales son crear uno nuevo o elegir uno ya existente, en caso de que, por ejemplo, estuviéramos creando esta máquina virtual a partir de una ya existente. Elegimos la primera opción como se muestra en la siguiente figura.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2010/01/VirtualMachineHardDisk.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="VirtualMachineHardDisk" border="0" alt="VirtualMachineHardDisk" src="{{ site.baseurl }}/assets/VirtualMachineHardDisk_thumb.png" width="244" height="189" /></a> </p>
+<p>Con esto ya tendríamos terminada nueva máquina virtual. Para empezar con la instalación de Windows 7, bastaría con introducir en el DVD de instalación, volver a la ventana de Windows Virtual PC, seleccionar la nueva máquina “Windows7” y pulsar el botón “Open”. De este modo la máquina empieza a ejecutarse y, como cualquier máquina, arrancaría con el DVD la instalación. El final del proceso sería la pantalla con la que Windows 7 nos da la bienvenida para empezar la instalación, seleccionando la configuración de idioma como muestra la siguiente imagen.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2010/01/Windows7InVirtualPC.png"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="Windows7InVirtualPC" border="0" alt="Windows7InVirtualPC" src="{{ site.baseurl }}/assets/Windows7InVirtualPC_thumb.png" width="244" height="199" /></a> </p>
+<p>El resto es next-&gt; next-&gt; next, puesto que para Windows 7 la instalación se está haciendo sobre una máquina real y los pasos a seguir son los mismos.</p>
+<p>Para terminar, es muy recomendable instalar los Integration Components. Se puede hacer desde el menú Tools que aparece en la propia ventana de la máquina virtual y nos permitirá, entre otras cosas, tener sonido, acceso a USBs y, lo que me parece más importante, poder sacar el ratón de dentro de la máquina virtual sin tener que recurrir a la combinación ALT+CONTROL+RIGHT, lo que aumenta considerablemente la sensación de integración.</p>

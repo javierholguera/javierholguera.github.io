@@ -1,0 +1,33 @@
+---
+layout: post
+title: WebBrowser + Mango = IE9
+date: 2011-07-31 12:16:28.000000000 +01:00
+type: post
+published: true
+status: publish
+categories:
+- Silverlight
+tags:
+- IE9
+- Silverlight
+- WebBrowser
+- WP7
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1442723821;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:123;}i:1;a:1:{s:2:"id";i:137;}i:2;a:1:{s:2:"id";i:104;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>El otro día me llegó al correo una pregunta que, como de costumbre, no supe responder. Me preguntaban si podíamos esperar que WebBrowser utilizara IE9 como navegador en Mango.</p>
+<p>Lo primero que me sugería la lógica es que sí. WebBrowser había estado utilizando IE7 hasta ahora y, puesto que Mango trae como una de sus principales novedades IE9 como navegador, lo normal era esperar que fuera así.</p>
+<p>Rebuscando por MSDN (ese sitio donde está toda la información pero es casi imposible encontrar nada), encontré <a href="http://msdn.microsoft.com/en-us/library/hh202996(v=vs.92).aspx">un pequeño artículo sobre los cambios e incompatibilidades de Mango</a> en el que, explícitamente, citaban a WebBrowser y decían lo siguiente (traducción de cosecha propia):</p>
+<blockquote><p>El control WebBrowser para Windows Phone se ha actualizado para soportar Internet Explorer 9. Las aplicaciones que usen este control deberían re-testearse para asegurar su compatibilidad con Internet Explorer 9.</p>
+</blockquote>
+<p>Parecía suficiente, pero ya que tengo instalado Mango en el teléfono, decidí probarlo por mí mismo. Creé un proyecto en el que simplemente incrusté un WebBrowser y una caja de texto para meter una dirección. El resultado lo podéis en la siguientes imágenes, primero navegando a <a title="http://user-agent-string.info/parse" href="http://user-agent-string.info/parse">http://user-agent-string.info/parse</a> para conseguir información sobre el User Agent String que está enviando el control WebBrowser.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2011/07/MangoBrowser_7-31-2011_13.10.33.888.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; margin-left: auto; border-top: 0px; margin-right: auto; border-right: 0px; padding-top: 0px" title="MangoBrowser_7-31-2011_13.10.33.888" border="0" alt="MangoBrowser_7-31-2011_13.10.33.888" src="{{ site.baseurl }}/assets/MangoBrowser_7-31-2011_13.10.33.888_thumb.png" width="262" height="434" /></a></p>
+<p>Y, en esta otra, navegando al test ACID3, que aunque no valga de mucho por ser muy poco exhaustivo, sí nos sirve para diferenciar entre IE7 e IE9.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2011/07/MangoBrowser_ACID3_7-31-2011_13.14.50.684.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; margin-left: auto; border-top: 0px; margin-right: auto; border-right: 0px; padding-top: 0px" title="MangoBrowser_ACID3_7-31-2011_13.14.50.684" border="0" alt="MangoBrowser_ACID3_7-31-2011_13.14.50.684" src="{{ site.baseurl }}/assets/MangoBrowser_ACID3_7-31-2011_13.14.50.684_thumb.png" width="262" height="434" /></a></p>
+<p>En definitiva, <strong>WebBrowser en Mango SÍ funcionará sobre Internet Explorer 9</strong>.</p>

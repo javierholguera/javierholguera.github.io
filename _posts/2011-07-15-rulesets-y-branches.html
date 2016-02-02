@@ -1,0 +1,31 @@
+---
+layout: post
+title: Rulesets y branches
+date: 2011-07-15 11:09:00.000000000 +01:00
+type: post
+published: true
+status: publish
+categories: []
+tags:
+- branch
+- ruleset
+- Visual Studio 2010
+meta:
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1448858972;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:168;}i:1;a:1:{s:2:"id";i:104;}i:2;a:1:{s:2:"id";i:58;}}}}
+author:
+  login: admin
+  email: javier.holguera@gmail.com
+  display_name: admin
+  first_name: ''
+  last_name: ''
+---
+<p>Desde la versión 2010 de Visual Studio podemos configurar rulesets específicos para cada proyecto, que se guardan como ficheros con extensión .ruleset.</p>
+<p>Esta nueva forma de gestionarlo es muy flexible y nos permite controlar cómo de estricto es Code Analysis a la hora de realizar el análisis estático de cada uno de los proyectos de nuestra solución.</p>
+<p>Por supuesto, si todo el proyecto comparte unas mismas reglas, es perfectamente posible compartir un único fichero (la solución que, en mi caso, adopto el 99% de las ocasiones).</p>
+<p>Puesto que los rulesets pueden definirse para cada proyecto, dicha configuración se refleja en el .csproj. de dicho proyecto. La buena noticia es que la ruta es relativa, con lo cual en el momento de crear nuevas ramas, no tendremos ningún problema. La nueva versión del .csproj en la nueva rama hará referencia directamente a la nueva versión del fichero .ruleset que también habremos brancheado (ojo con esto si estamos haciendo branches parciales).</p>
+<p>Sin embargo, hay un comportamiento no deseado: cuando se mueve un proyecto, la ruta relativa no se actualiza. Por lo tanto, deja de hacer referencia a nada que exista, al haberse desplazado la posición del fichero .csproj.</p>
+<p>En este caso, al compilar en Visual Studio, recibiremos un warning avisando de que, al no haber podido cargar el ruleset para el proyecto, no se ha ejecutado Code Analysis.</p>
+<p>La solución es fácil: abrir las propiedades del proyecto y volver a seleccionar el ruleset correspondiente a la rama en la que nos encontramos. Pero ojo al realizar esta operación, puesto que en el combo de seleccionar, por defecto, no vamos a ver ese fichero.</p>
+<p><a href="{{ site.baseurl }}/assets/uploads/2011/07/ruleset.png"><img style="background-image: none; border-right-width: 0px; margin: 4px 10px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="ruleset" border="0" alt="ruleset" src="{{ site.baseurl }}/assets/ruleset_thumb.png" width="599" height="350" /></a></p>
+<p>En su lugar, sí nos va a aparecer una entrada relativa al fichero original, aquél del que hemos hecho el branch, y es muy sencillo no percatarnos de ellos y elegirlo (puesto que, al ser nuestro branch una copia, tendrá el mismo nombre).</p>
+<p>En definitiva, los rulesets y los branches funcionan perfectamente, pero debemos tener cierto cuidado en caso de que movamos alguno de nuestros proyectos. En tal situación, actualizar las propiedades del proyecto con cierto cuidado de no elegir el ruleset equivocado.</p>
