@@ -10,6 +10,8 @@ tags:
 - schema registry
 ---
 
+Testing what's going on
+
 My company uses [Apache Kafka](http://kafka.apache.org/) as the spine for its next-generation architecture. Kafka is a distributed append-only log that can be used as a pub-sub mechanism. We use Kafka to publish events once business processes have completed successfully, allowing a high degree of decoupling between producers and consumers.
 
 These events are encoded using [Avro schemas](http://avro.apache.org). Avro is a binary serialization format that enables a compact representation of data, much more than, for instance, JSON. Given the high volume of events we publish to kafka, using a compact format is critical.
